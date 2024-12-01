@@ -4,7 +4,6 @@
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
-/[Bb]uild/
 /[Bb]uilds/
 /[Ll]ogs/
 /Assets/AssetStoreTools*
@@ -90,14 +89,3 @@ Corridor/Library/metadata/
 Build_iOS/
 
 # Temporary auto-generated Android Assets
-/[Aa]ssets/[Ss]treamingAssets/aa.meta
-/[Aa]ssets/[Ss]treamingAssets/aa/*
-Packages/manifest.json
-Packages/packages-lock.json
-Packages/packages-lock.json
-Packages/manifest.json
-Packages/packages-lock.json
-Packages/com.github.homuler.mediapipe/Runtime/Plugins/Android/mediapipe_android.aar
-Packages/com.github.homuler.mediapipe/Runtime/Plugins/Android/mediapipe_android.aar.meta
-BuildIOS/Data/resources.assets.resS
-BuildIOS/Libraries/libiPhone-lib.a
