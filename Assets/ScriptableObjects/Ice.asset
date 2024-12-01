@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9964605d750984da27d829ae2d8dcb, type: 3}
+  m_Name: Ice
+  m_EditorClassIdentifier: 
+  skillName: Ice
+  skillDescription: ice attack
+  power: 30
+  mpCost: 20
+  isUnlocked: 1
+  currentType: 1
+  effect: {fileID: 443653445314069269, guid: 7e3e8e2f6ecdbb04a982af0a14f2d887, type: 3}
+  aura: {fileID: 9136071066029953247, guid: 0bb0977924d51da48b76aba2ae5c96b5, type: 3}
