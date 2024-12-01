@@ -8,10 +8,12 @@
 /[Ll]ogs/
 /Assets/AssetStoreTools*
 /Assets/StreamingAssets
+/Build/Specialisation Project_Data\sharedassets1.assets.resS
 sysinfo.txt
 *.stackdump
 *.apk
 *.unitypackage
+
  
 # ================================== #
 # Visual Studio 2015 cache directory #
