@@ -8,7 +8,6 @@
 /[Ll]ogs/
 /Assets/AssetStoreTools*
 /Assets/StreamingAssets
-/Build/Specialisation Project_Data\sharedassets1.assets.resS
 sysinfo.txt
 *.stackdump
 *.apk
@@ -91,3 +90,4 @@ Corridor/Library/metadata/
 Build_iOS/
 
 # Temporary auto-generated Android Assets
+Build/Specialisation Project_Data/sharedassets1.assets.resS
