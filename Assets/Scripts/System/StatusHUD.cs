@@ -59,14 +59,29 @@ public class StatusHUD : MonoBehaviour
 
     public IEnumerator SetHP(UnitStatus status, float hp, bool isIncrease)
     {
-        if (status.health -hp < 0)
+        if (isIncrease)
         {
-            status.health = 0;
+            if (status.health + hp > status.maxHealth)
+            {
+                status.health = status.maxHealth;
+            }
+            else
+            {
+                status.health += hp;
+            }
         }
         else
         {
-            status.health -= hp;
+            if (status.health - hp < 0)
+            {
+                status.health = 0;
+            }
+            else
+            {
+                status.health -= hp;
+            }
         }
+       
         hpBar.fillAmount = (status.health * (100 / status.maxHealth)) / 100;
         hpValue.SetText(status.health + "/" + status.maxHealth);
         while (elapsedTime < waitTime)
@@ -91,14 +106,30 @@ public class StatusHUD : MonoBehaviour
 
     public IEnumerator SetMP(float mp, bool isIncrease)
     {
-        if (currentMana - mp < 0)
+        if (isIncrease)
         {
-            currentMana = 0;
+            if (currentMana + mp > maxMana)
+            {
+                currentMana = maxMana;
+            }
+            else
+            {
+                currentMana += mp;
+            }
+            
         }
         else
         {
-            currentMana -= mp;
+            if (currentMana - mp < 0)
+            {
+                currentMana = 0;
+            }
+            else
+            {
+                currentMana -= mp;
+            }
         }
+       
         mpBar.fillAmount = (currentMana * (100 / maxMana)) / 100;
         mpValue.SetText(currentMana + "/" + maxMana);
         while (elapsedTime < waitTime)
@@ -117,7 +148,6 @@ public class StatusHUD : MonoBehaviour
         //}
         //mpValue.SetText(currentMana + "/" + maxMana);
         //StartCoroutine(GraduallySetMPBar(mp, isIncrease, 10, 0.05f, mpBar));
-
     }
 
     public float GetMP()

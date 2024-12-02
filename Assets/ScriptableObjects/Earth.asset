@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: Earth
   skillDescription: earth attack
   power: 30
-  mpCost: 20
+  mpCost: 40
   isUnlocked: 1
   currentType: 2
   effect: {fileID: 7819775807870019735, guid: ae04cfd12ef65574a97a6dc6303a218d, type: 3}

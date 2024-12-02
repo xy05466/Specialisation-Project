@@ -57,6 +57,8 @@ public class BattleSystemManager : MonoBehaviour
     private Skill skillToUse;
     private GameObject skillEffect;
     private int skillMpCost;
+    private int mpDebt;
+    private bool inDebt;
     private List<StatusHUD> hudToChangeList;
 
     private float maxPlayerMana;
@@ -175,11 +177,6 @@ public class BattleSystemManager : MonoBehaviour
                     break;
                 }
             }
-            //partyIndex = j;
-            //if (partyIndex > playerParty.party.Count - 1)
-            //{
-            //    partyIndex = 0;
-            //}
         }
         else
         {
@@ -241,32 +238,41 @@ public class BattleSystemManager : MonoBehaviour
     {
         if (canSelect)
         {
+            if (hudToChangeList == null)
+            {
+                hudToChangeList = enemyStatusHUDList;
+            }
+            if (partyToAttack == null)
+            {
+                partyToAttack = enemyStatuses;
+            }
+            
             if (Input.GetKeyDown(KeyCode.U))
             {
 
-                    index = playerStatuses.Count - 1;
-                    enemyToAttack = playerStatuses[index];
-                    arrow.gameObject.transform.position = new Vector3(playerStatuses[index].transform.position.x, playerStatuses[index].transform.position.y + 5f, playerStatuses[index].transform.position.z);
+                index = playerStatuses.Count - 1;
+                partyToAttack = playerStatuses;
+                arrow.gameObject.transform.position = new Vector3(playerStatuses[index].transform.position.x, playerStatuses[index].transform.position.y + 5f, playerStatuses[index].transform.position.z);
                 hudToChangeList = playerStatusHUDList;
-                    Debug.Log(enemyToAttack.name);
+                //Debug.Log(enemyToAttack.name);
                 
             }
             if (Input.GetKeyDown(KeyCode.O))
             {
 
-                    index = enemyStatuses.Count - 1;
-                    enemyToAttack = enemyStatuses[index];
-                    arrow.gameObject.transform.position = new Vector3(enemyStatuses[index].transform.position.x, enemyStatuses[index].transform.position.y + 5f, enemyStatuses[index].transform.position.z);
-                hudToChangeList = playerStatusHUDList;
-                Debug.Log(enemyToAttack.name);
+                index = enemyStatuses.Count - 1;
+                partyToAttack = enemyStatuses;
+                arrow.gameObject.transform.position = new Vector3(enemyStatuses[index].transform.position.x, enemyStatuses[index].transform.position.y + 5f, enemyStatuses[index].transform.position.z);
+                hudToChangeList = enemyStatusHUDList;
+                //Debug.Log(enemyToAttack.name);
                 
             }
             if (Input.GetKeyDown(KeyCode.J) && index >0)
             {
                 index--;
-                if (enemyStatuses[index].condition == CharacterStatus.Condition.DEAD)
+                if (partyToAttack[index].condition == CharacterStatus.Condition.DEAD)
                 {
-                    if (enemyStatuses.Count > 2)
+                    if (partyToAttack.Count > 2)
                     {
                         index = 0;
                     }
@@ -275,16 +281,16 @@ public class BattleSystemManager : MonoBehaviour
                         index++;
                     }
                 }
-                enemyToAttack = enemyStatuses[index];
-                arrow.gameObject.transform.position = new Vector3(enemyStatuses[index].transform.position.x, enemyStatuses[index].transform.position.y + 5f, enemyStatuses[index].transform.position.z);
+                enemyToAttack = partyToAttack[index];
+                arrow.gameObject.transform.position = new Vector3(enemyToAttack.transform.position.x, enemyToAttack.transform.position.y + 5f, enemyToAttack.transform.position.z);
                 Debug.Log(enemyToAttack.name);
             }
             if (Input.GetKeyDown(KeyCode.L) && (index + 1) <= encounterLeft - 1)
             {
                 index++;
-                if (enemyStatuses[index].condition == CharacterStatus.Condition.DEAD)
+                if (partyToAttack[index].condition == CharacterStatus.Condition.DEAD)
                 {
-                    if (enemyStatuses.Count > 2)
+                    if (partyToAttack.Count > 2)
                     {
                         index = 2;
                     }
@@ -293,15 +299,17 @@ public class BattleSystemManager : MonoBehaviour
                         index--;
                     }
                 }
-                enemyToAttack = enemyStatuses[index];
-                arrow.gameObject.transform.position = new Vector3(enemyStatuses[index].transform.position.x, enemyStatuses[index].transform.position.y + 5f, enemyStatuses[index].transform.position.z);
+                enemyToAttack = partyToAttack[index];
+                arrow.gameObject.transform.position = new Vector3(enemyToAttack.transform.position.x, enemyToAttack.transform.position.y + 5f, enemyToAttack.transform.position.z);
                 Debug.Log(enemyToAttack.name);
             }
-            if (Input.GetKeyDown(KeyCode.K) && enemyToAttack != null)
+            if (Input.GetKeyDown(KeyCode.K))
             {
-                //enemyToAttack = enemyStatuses[index];
+                enemyToAttack = partyToAttack[index];
                 Debug.Log("attack" + enemyToAttack.name);
                 OnAttackButtonPress();
+                hudToChangeList = enemyStatusHUDList;
+                partyToAttack = enemyStatuses;
             }
         }
        
@@ -327,7 +335,6 @@ public class BattleSystemManager : MonoBehaviour
         }
     }
    
-
     private bool CheckSkillDmg(StatusHUD hud,UnitStatus target)
     {
         if (skillToUse.currentType == target.weakness)
@@ -339,41 +346,61 @@ public class BattleSystemManager : MonoBehaviour
         {
             if (target.health + skillToUse.power < target.maxHealth)
             {
-                StartCoroutine(hud.SetHP(target, -skillToUse.power,true));
+                StartCoroutine(hud.SetHP(target, skillToUse.power, true));
                 
             }
             else
             {
-                StartCoroutine(hud.SetHP(target, target.maxHealth - target.health, true));
+                StartCoroutine(hud.SetHP(target, target.maxHealth, true));
             }
             return false;
         }
         else
         {
-            StartCoroutine(hud.SetHP(target, skillToUse.power, false));
+            StartCoroutine(hud.SetHP(target, skillToUse.power,false));
             return true;
         }
     }
 
-    IEnumerator PlayerAttack(UnitStatus character)
+    private void CheckMpCost(StatusHUD hud, UnitStatus target)
+    {
+        if (skillToUse.currentType == target.weakness)
+        {
+            skillMpCost = Mathf.RoundToInt(skillToUse.mpCost * 0.5f);
+        }
+        else if (skillToUse.currentType == target.heal)
+        {
+            skillMpCost = Mathf.RoundToInt(skillToUse.mpCost * 1.5f);
+        }
+        else
+        {
+            skillMpCost = Mathf.RoundToInt(skillToUse.mpCost);
+        }
+        if (hud.GetMP() - skillMpCost < 0)
+        {
+            mpDebt = Mathf.FloorToInt((Mathf.Abs(hud.GetMP() - skillMpCost) * 2));
+            inDebt = true;
+            //skillMpCost += mpDebt;
+        }
+        else
+        {
+            mpDebt = 0;
+            inDebt = false;
+        }
+    }
+
+    IEnumerator PlayerAttack(UnitStatus target)
     {
         // trigger the execution of attack animation
         // in 'BattlePresence' animator
         skillImage.SetActive(true);
         skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.name;
-        //if (skillToUse.currentType == enemyStatuses[index].weakness)
-        //{
-        //    skillMpCost = Mathf.RoundToInt(skillToUse.mpCost * 0.5f);
-        //}
-        //else if (skillToUse.currentType == enemyStatuses[index].heal)
-        //{
-        //    skillMpCost = Mathf.RoundToInt(skillToUse.mpCost * 1.5f);
-        //}
-        StartCoroutine(playerMPHUD.SetMP(skillToUse.mpCost, false));
-        StartCoroutine(playerStatuses[partyIndex].animCon.AttackAnimation(skillToUse, character.transform.position));
+        CheckMpCost(playerMPHUD, target);
+        StartCoroutine(playerMPHUD.SetMP((skillMpCost), false));
+        StartCoroutine(playerStatuses[partyIndex].animCon.AttackAnimation(skillToUse, target.transform.position));
 
-        yield return StartCoroutine(character.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
-        CheckSkillDmg(hudToChangeList[index], character);
+        yield return StartCoroutine(target.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
+        CheckSkillDmg(hudToChangeList[index], target);
 
         skillImage.SetActive(false);
 
@@ -401,18 +428,22 @@ public class BattleSystemManager : MonoBehaviour
             {
                 arrow.transform.position = new Vector3(status.transform.position.x, status.transform.position.y + 5f, status.transform.position.z);
             }
+            //else
+            //{
+
+            //}
             n++;
         }
         index = n;
-        if (playerMPHUD.GetMP() <= 0)
+        if (inDebt || (playerMPHUD.GetMP() <= 0 && !inDebt))
         {
             // if the enemy health is still
             // above 0 when the turn finishes
             // it's enemy's turn!   
-            yield return StartCoroutine(playerMPHUD.SetMP(-(maxPlayerMana - playerMPHUD.GetMP()),true));
-            //partyIndex = 0;
-            setPlayerSkills(true);
-            //yield return new WaitForSeconds(1);
+            yield return StartCoroutine(playerMPHUD.SetMP(Mathf.Abs(maxPlayerMana - playerMPHUD.GetMP()) - mpDebt, true));
+            inDebt = false;
+            mpDebt = 0;
+            setPlayerSkills(false);
             battleState = BattleState.ENEMYTURN;
             yield return StartCoroutine(EnemyTurn());
         }
@@ -462,11 +493,9 @@ public class BattleSystemManager : MonoBehaviour
 
     IEnumerator EnemyTurn()
     {
-        // as before, decrease playerhealth by a fixed
-        // amount of 10. You probably want to have some
-        // more complex logic here.
         int i = 0;
-        while (enemyMPHUD.GetMP() > 0)
+        UnitStatus unitTarget;
+        while (!inDebt)
         {
             foreach (UnitStatus enemy in enemyStatuses)
             {
@@ -483,6 +512,7 @@ public class BattleSystemManager : MonoBehaviour
                 if (action == EnemyAI.Action.ATTACK)
                 {
                     int skill;
+                    unitTarget = playerStatuses[target];
                     if (enemy.GetComponent<UnitStatus>().skills.Count > 1)
                     {
                         skill = Random.Range(0, enemy.GetComponent<UnitStatus>().skills.Count);
@@ -492,53 +522,40 @@ public class BattleSystemManager : MonoBehaviour
                         skill = 0;
                     }
                     SetSkillToUse(enemy.GetComponent<UnitStatus>().skills[skill]);
-                    //if (skillToUse.currentType == playerStatuses[target].weakness)
-                    //{
-                    //    skillMpCost = Mathf.RoundToInt(skillToUse.mpCost * 0.5f);
-                    //}
-                    //else if (skillToUse.currentType == playerStatuses[target].heal)
-                    //{
-                    //    skillMpCost = Mathf.RoundToInt(skillToUse.mpCost * 1.5f);
-                    //}
-                    if (enemyMPHUD.GetMP() - skillToUse.mpCost < 0)
-                    {
-                        break;
-                    }
+                    CheckMpCost(enemyMPHUD, unitTarget);
                     skillImage.SetActive(true);
                     skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.name;
 
-                    StartCoroutine(enemyMPHUD.SetMP(skillToUse.mpCost, false));
-                    StartCoroutine(enemy.GetComponent<UnitStatus>().animCon.AttackAnimation(skillToUse, playerStatuses[target].transform.position));
+                    StartCoroutine(enemyMPHUD.SetMP(skillMpCost, false));
+                    StartCoroutine(enemy.GetComponent<UnitStatus>().animCon.AttackAnimation(skillToUse, unitTarget.transform.position));
                     
-                    yield return StartCoroutine(playerStatuses[target].animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration / 2));
-                    CheckSkillDmg(playerStatusHUDList[target], playerStatuses[target]);
+                    yield return StartCoroutine(unitTarget.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration / 2));
+                    CheckSkillDmg(playerStatusHUDList[target], unitTarget);
                     skillImage.SetActive(false);
                 }
                 else
                 {
+                    unitTarget = enemy.GetComponent<EnemyAI>().Defend(enemyStatuses, enemy);
+                    target = enemyStatuses.IndexOf(unitTarget);
                     foreach (Skill skill in enemy.GetComponent<UnitStatus>().skills)
                     {
-                        if (skill.currentType == enemy.GetComponent<UnitStatus>().heal)
+                        if (skill.currentType == unitTarget.heal)
                         {
                             SetSkillToUse(skill);
                         }
                     }
-
+                    CheckMpCost(enemyMPHUD, unitTarget);
                     skillImage.SetActive(true);
                     skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.name;
-                    if (enemyMPHUD.GetMP() - skillToUse.mpCost <= 0)
-                    {
-                        break;
-                    }
-                    StartCoroutine(enemyMPHUD.SetMP(skillToUse.mpCost, false));
-                    StartCoroutine(enemy.GetComponent<UnitStatus>().animCon.AttackAnimation(skillToUse, enemy.GetComponent<EnemyAI>().Defend().gameObject.transform.position));
-
-                    CheckSkillDmg(enemyStatusHUDList[i], enemy.GetComponent<EnemyAI>().Defend());
+                    StartCoroutine(enemyMPHUD.SetMP(skillMpCost, false));
+                    StartCoroutine(enemy.GetComponent<UnitStatus>().animCon.AttackAnimation(skillToUse, unitTarget.transform.position));
+                    CheckSkillDmg(enemyStatusHUDList[target], unitTarget);
                     
-                    yield return StartCoroutine(enemy.GetComponent<EnemyAI>().Defend().animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
+                    yield return StartCoroutine(unitTarget.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
                     
                     skillImage.SetActive(false);
                 }
+               
                 foreach (UnitStatus status in playerStatuses)
                 {
                     if (status.health <= 0 && status.condition != CharacterStatus.Condition.DEAD)
@@ -561,72 +578,30 @@ public class BattleSystemManager : MonoBehaviour
                         }
                     }
                 }
-            
-                
                 i++;
                 if (i > encounterLeft - 1)
                 {
                     i = 0;
                 }
-                //enemy.GetComponent<UnitStatus>().animCon.ChangeAnimation(enemyStatuses[index].GetComponent<UnitStatus>().animCon.Attack, 0.1f, 0, 0);
-                //SetSkillToUse(enemy.GetComponent<UnitStatus>().skills[0]);
-                //enemyMPHUD.SetMP(skillToUse.mpCost);
-                ////Instantiate(skillToUse.effect, players[partyIndex].transform.position, Quaternion.identity);
-                //PlaySkillAnim(players[partyIndex].transform.position);
-
-                //yield return new WaitForSeconds(1);
-
-                //CheckSkillDmg(playerStatusHUDList[partyIndex], players[partyIndex].GetComponent<UnitStatus>());
-                //players[partyIndex].GetComponent<UnitStatus>().animCon.ChangeAnimation(players[partyIndex].GetComponent<UnitStatus>().animCon.Hurt, 0.1f, 0, 0);
-                //yield return new WaitForSeconds(1);
-                //players[partyIndex].GetComponent<UnitStatus>().animCon.ChangeAnimation(players[partyIndex].GetComponent<UnitStatus>().animCon.Combat, 0.1f, 0, 0);
-
-
+                if (inDebt || (enemyMPHUD.GetMP() <= 0 && !inDebt))
+                {
+                    break;
+                }
             }
-            if (enemyMPHUD.GetMP() - skillToUse.mpCost < 0)
+            if (inDebt || (enemyMPHUD.GetMP() <= 0 && !inDebt))
             {
                 break;
             }
         }
-        yield return StartCoroutine(enemyMPHUD.SetMP(-(maxEnemyMana - enemyMPHUD.GetMP()), true));
+        yield return StartCoroutine(enemyMPHUD.SetMP(Mathf.Abs(maxEnemyMana - enemyMPHUD.GetMP()) - mpDebt, true));
+        inDebt = false;
+        mpDebt = 0;
         //yield return new WaitForSeconds(1);
         battleState = BattleState.PLAYERTURN;
         yield return StartCoroutine(PlayerTurn());
         // if the player health is still
         // above 0 when the turn finishes
         // it's our turn again!
-
-
-        //for (int i = 0; i < encounters.enemyNum; i++)
-        //{
-        //    playerStatusHUD.SetHP(playerStatus, 10);
-        //    player.GetComponent<UnitStatus>().animCon.ChangeAnimation(player.GetComponent<UnitStatus>().animCon.Hurt, 0.1f, 0, 0);
-        //    yield return new WaitForSeconds(1);
-        //    if (playerStatus.health <= 0)
-        //    {
-        //        // if the player health drops to 0 
-        //        // we have lost the battle...
-        //        battleState = BattleState.LOST;
-        //        yield return StartCoroutine(EndBattle());
-        //    }
-        //    else
-        //    {
-        //        // if the player health is still
-        //        // above 0 when the turn finishes
-        //        // it's our turn again!
-        //        battleState = BattleState.PLAYERTURN;
-        //        yield return StartCoroutine(PlayerTurn());
-        //    }
-        //}
-
-        //playerStatusHUD.SetHP(playerStatus, 10);
-
-        // play attack animation by triggering
-        // it inside the enemy animator
-        //enemy.GetComponent<Animator>().SetTrigger("Attack");
-
-        //yield return new WaitForSeconds(1);
-
 
     }
     IEnumerator EndBattle()

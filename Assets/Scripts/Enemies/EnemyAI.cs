@@ -30,8 +30,26 @@ public class EnemyAI : MonoBehaviour
         
     //}
 
-    public UnitStatus Defend()
+    
+
+    public UnitStatus Defend(List<UnitStatus> party, UnitStatus enemy)
     {
+        if (toHeal.health == toHeal.maxHealth)
+        {
+            foreach (UnitStatus own in party)
+            {
+                if (own.health != own.maxHealth)
+                {
+                    foreach (Skill skill in enemy.skills)
+                    {
+                        if (skill.currentType == own.heal)
+                        {
+                            toHeal = own;
+                        }
+                    }
+                }
+            }
+        }
         return toHeal;
     }
 

@@ -3309,9 +3309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scriptableEnemies:
-  - {fileID: 5492391064966338315, guid: 1b8d8a0de6f2a4647949d20eb8df119a, type: 3}
   - {fileID: 2803820806472684270, guid: ccbe5634c0850b74da4458b26f55dab3, type: 3}
-  - {fileID: 1000013586557078, guid: 3c9c8a8bf50e6b5439ab9db67bc82586, type: 3}
   scriptableItems: []
   enemyToSpawn: []
   isBoss: 0

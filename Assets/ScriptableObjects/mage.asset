@@ -18,9 +18,9 @@ MonoBehaviour:
   - 0
   characterGameObject: {fileID: 8094889875040262764, guid: 2de0d02bd1617fd47812d120e3e1a6ce, type: 3}
   level: 1
-  maxHealth: 30
+  maxHealth: 40
   maxMana: 20
-  health: 30
+  health: 40
   mana: 20
   skills:
   - {fileID: 11400000, guid: 15b5365629876ed4594610cab902260b, type: 2}

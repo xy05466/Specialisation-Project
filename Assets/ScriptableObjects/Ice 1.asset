@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: Ice
   skillDescription: ice attack
   power: 20
-  mpCost: 20
+  mpCost: 10
   isUnlocked: 1
   currentType: 1
   effect: {fileID: 443653445314069269, guid: 7e3e8e2f6ecdbb04a982af0a14f2d887, type: 3}
