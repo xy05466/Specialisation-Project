@@ -57,6 +57,7 @@ public class BattleSystemManager : MonoBehaviour
     private Skill skillToUse;
     private GameObject skillEffect;
     private int skillMpCost;
+    private List<StatusHUD> hudToChangeList;
 
     private float maxPlayerMana;
     private float currPlayerMana;
@@ -242,19 +243,23 @@ public class BattleSystemManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.U))
             {
-                partyToAttack = playerStatuses;
-                if (partyToAttack.Count < index)
-                {
-                    index = partyToAttack.Count - 1;
-                }
+
+                    index = playerStatuses.Count - 1;
+                    enemyToAttack = playerStatuses[index];
+                    arrow.gameObject.transform.position = new Vector3(playerStatuses[index].transform.position.x, playerStatuses[index].transform.position.y + 5f, playerStatuses[index].transform.position.z);
+                hudToChangeList = playerStatusHUDList;
+                    Debug.Log(enemyToAttack.name);
+                
             }
             if (Input.GetKeyDown(KeyCode.O))
             {
-                partyToAttack = enemyStatuses;
-                if (partyToAttack.Count < index)
-                {
-                    index = partyToAttack.Count - 1;
-                }
+
+                    index = enemyStatuses.Count - 1;
+                    enemyToAttack = enemyStatuses[index];
+                    arrow.gameObject.transform.position = new Vector3(enemyStatuses[index].transform.position.x, enemyStatuses[index].transform.position.y + 5f, enemyStatuses[index].transform.position.z);
+                hudToChangeList = playerStatusHUDList;
+                Debug.Log(enemyToAttack.name);
+                
             }
             if (Input.GetKeyDown(KeyCode.J) && index >0)
             {
@@ -292,9 +297,9 @@ public class BattleSystemManager : MonoBehaviour
                 arrow.gameObject.transform.position = new Vector3(enemyStatuses[index].transform.position.x, enemyStatuses[index].transform.position.y + 5f, enemyStatuses[index].transform.position.z);
                 Debug.Log(enemyToAttack.name);
             }
-            if (Input.GetKeyDown(KeyCode.K))
+            if (Input.GetKeyDown(KeyCode.K) && enemyToAttack != null)
             {
-                enemyToAttack = enemyStatuses[index];
+                //enemyToAttack = enemyStatuses[index];
                 Debug.Log("attack" + enemyToAttack.name);
                 OnAttackButtonPress();
             }
@@ -365,10 +370,10 @@ public class BattleSystemManager : MonoBehaviour
         //    skillMpCost = Mathf.RoundToInt(skillToUse.mpCost * 1.5f);
         //}
         StartCoroutine(playerMPHUD.SetMP(skillToUse.mpCost, false));
-        StartCoroutine(playerStatuses[partyIndex].animCon.AttackAnimation(skillToUse, enemyStatuses[index].transform.position));
+        StartCoroutine(playerStatuses[partyIndex].animCon.AttackAnimation(skillToUse, character.transform.position));
 
-        yield return StartCoroutine(enemyStatuses[index].animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
-        CheckSkillDmg(enemyStatusHUDList[index], character);
+        yield return StartCoroutine(character.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
+        CheckSkillDmg(hudToChangeList[index], character);
 
         skillImage.SetActive(false);
 
