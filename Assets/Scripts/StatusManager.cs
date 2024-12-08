@@ -41,7 +41,7 @@ public class StatusManager : MonoBehaviour
                     PlayerPrefs.SetString("EncounterPos", this.transform.localPosition.ToString());
                     encounternum++;
                     targetPosition = transform.position;
-                   // SceneLoader.instance.LoadLevel("BattleArena");
+                    SceneLoader.instance.LoadLevel("BattleArena");
                 }
             }
         }

@@ -19,7 +19,7 @@ public class Encounters : MonoBehaviour
         }
         else
         {
-            enemyNum = 2;
+            enemyNum = Random.Range(1, 4);
         }
 
         enemyToSpawn = new List<GameObject>();
