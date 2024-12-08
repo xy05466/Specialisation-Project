@@ -25,7 +25,7 @@ MonoBehaviour:
   skills:
   - {fileID: 11400000, guid: 15b5365629876ed4594610cab902260b, type: 2}
   - {fileID: 11400000, guid: d510ca1f4c518a64fb8289c22a225c34, type: 2}
-  weakness: 0
+  weakness: 2
   heal: 1
   isRecruited: 0
   condition: 0

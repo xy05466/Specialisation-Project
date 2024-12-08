@@ -21,10 +21,10 @@ public class StatusManager : MonoBehaviour
         playerMovementController = GetComponent<PlayerMovementController>();
         enemyStatus = new CharacterStatus();
         keynum = PlayerPrefs.GetInt("keynum", 0);
-        if (PlayerPrefs.GetString("EncounterPos") != "")
-        {
-            transform.position = StringToVector3(PlayerPrefs.GetString("EncounterPos"));
-        }
+        //if (PlayerPrefs.GetString("EncounterPos") != "")
+        //{
+        //    transform.position = StringToVector3(PlayerPrefs.GetString("EncounterPos"));
+        //}
     }
 
     private void Update()
@@ -41,7 +41,7 @@ public class StatusManager : MonoBehaviour
                     PlayerPrefs.SetString("EncounterPos", this.transform.localPosition.ToString());
                     encounternum++;
                     targetPosition = transform.position;
-                    SceneLoader.instance.LoadLevel("BattleArena");
+                   // SceneLoader.instance.LoadLevel("BattleArena");
                 }
             }
         }

@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: M_VFX_Fire_02
   m_Shader: {fileID: 4800000, guid: 757cc62654d6ac046baabf16cb62594d, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _ADD_PRECOMPUTED_VELOCITY
@@ -23,6 +25,7 @@ Material:
   disabledShaderPasses:
   - DistortionVectors
   - TransparentBackface
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:

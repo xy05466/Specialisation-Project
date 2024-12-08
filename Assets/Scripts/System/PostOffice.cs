@@ -7,7 +7,7 @@ public class PostOffice : MonoBehaviour
 {
     public static PostOffice instance;
 
-    List<AnimationController> recipients = new List<AnimationController>();
+    List<GameObject> recipients = new List<GameObject>();
     private PostOffice()
     {
     }
@@ -25,10 +25,10 @@ public class PostOffice : MonoBehaviour
     public void SendToPostOffice(int currentState)
     {
         
-        Debug.Log("animationended");
+        
     }
 
-    public void Subscribe(AnimationController newListener)
+    public void Subscribe(GameObject newListener)
     {
         recipients.Add(newListener);
     }

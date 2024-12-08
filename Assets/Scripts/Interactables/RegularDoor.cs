@@ -12,6 +12,7 @@ public class RegularDoor : MonoBehaviour
     public readonly int openOneWay = Animator.StringToHash("RegularDoorOpenFront");
 
     private bool isOpened;
+    private Vector3 prevPlayerPos;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,29 +24,31 @@ public class RegularDoor : MonoBehaviour
         if (other.tag == "Player" && Input.GetKeyDown(KeyCode.E) && !isOpened)
         {
             animator.enabled = true;
+            prevPlayerPos = other.transform.position;
             if (transform.root.localRotation.eulerAngles.y == 0)
             {
                 isOpened = true;
                 if (other.transform.position.z > transform.position.z)
                 {
 
-                    animator.CrossFade(openBack, 0);
+                    animator.CrossFade(openBack, 0.1f);
                 }
                 else
                 {
                     
-                    animator.CrossFade(openFront, 0);
+                    animator.CrossFade(openFront, 0.1f);
                 }
+                
             }
             else if (transform.root.localRotation.eulerAngles.y == 90)
             {
                 if (other.transform.position.x < transform.position.x)
                 {
-                    animator.CrossFade(openBack, 0);
+                    animator.CrossFade(openBack, 0.1f);
                 }
                 else
                 {  
-                    animator.CrossFade(openFront, 0);
+                    animator.CrossFade(openFront, 0.1f);
 
                 }
             }
@@ -62,24 +65,25 @@ public class RegularDoor : MonoBehaviour
         {
             if (transform.root.localRotation.eulerAngles.y == 0)
             {
-                if (other.transform.position.z > transform.position.z)
+                if (prevPlayerPos.z > transform.position.z)
                 {
-                    animator.CrossFade(closeFront, 0);
+                    animator.CrossFade(closeBack, 0.1f);
                 }
                 else
                 {
-                    animator.CrossFade(closeBack, 0);
+                    animator.CrossFade(closeFront, 0.1f);
                 }
             }
             else if (transform.root.localRotation.eulerAngles.y == 90)
             {
-                if (other.transform.position.x < transform.position.x)
+                if (prevPlayerPos.x < transform.position.x)
                 {
-                    animator.CrossFade(closeFront, 0);
+                    animator.CrossFade(closeBack, 0.1f);
+                    
                 }
                 else
                 {
-                    animator.CrossFade(closeBack, 0);
+                    animator.CrossFade(closeFront, 0.1f);
                 }
             }
             isOpened = false;

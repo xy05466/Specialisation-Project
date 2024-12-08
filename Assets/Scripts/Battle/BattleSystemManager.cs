@@ -633,5 +633,9 @@ public class BattleSystemManager : MonoBehaviour
     void Update()
     {
         SelectTarget();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneLoader.instance.LoadLevel("SampleScene");
+        }
     }
 }

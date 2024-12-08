@@ -47,7 +47,6 @@ public class AnimationController : MonoBehaviour
             Instance = this;
 
         animator = GetComponent<Animator>();
-        PostOffice.GetInstance().Subscribe(this);
     }
 
     private void Update()
