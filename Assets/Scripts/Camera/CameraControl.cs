@@ -33,14 +33,14 @@ public class CameraControl : MonoBehaviour
         {
             //Camera.transform.Rotate(new Vector3(0, speed * Time.deltaTime, 0f));
             //Camera.transform.rotation = Quaternion.Euler(rotationX, transform.rotation.eulerAngles.y, 0f);
-            camera.transform.RotateAround(transform.position,Vector3.up, speed * Time.deltaTime);
+            virtualCamera.transform.RotateAround(transform.parent.position,Vector3.up, speed * Time.deltaTime);
             //RotatePeg(true);
         }
         else if (Input.GetKey(KeyCode.O))
         {
             //Camera.transform.Rotate(new Vector3(0, -speed * Time.deltaTime, 0f));
             //Camera.transform.rotation = Quaternion.Euler(rotationX, transform.rotation.eulerAngles.y, 0f);
-            camera.transform.RotateAround(transform.position, Vector3.up, -speed * Time.deltaTime);
+            virtualCamera.transform.RotateAround(transform.parent.position, Vector3.up, -speed * Time.deltaTime);
             //RotatePeg(false);
         }
         //else

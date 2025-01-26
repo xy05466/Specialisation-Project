@@ -11,7 +11,7 @@ public class Interactor : MonoBehaviour
     public bool IsInteracting { get; private set; }
     private GameObject interactingObject;
     private bool isInCollider;
-    
+    private HashSet<GameObject> objectsInsideSphere = new HashSet<GameObject>();
 
     private void Update()
     {
@@ -31,18 +31,38 @@ public class Interactor : MonoBehaviour
             }
 
         }
-        for (int i = 0;i < colliders.Length;i++)
+        HashSet<GameObject> currentlyDetectedObjects = new HashSet<GameObject>();
+        foreach (var collider in colliders)
         {
-            if (colliders[i] == interactingObject)
+            var component = collider.GetComponent<IInteractable>();
+            if (component != null)
             {
-                isInCollider = true;
+                currentlyDetectedObjects.Add(collider.gameObject);
             }
         }
-        if (!isInCollider && interactingObject != null)
+
+        // Check for objects that have left the sphere
+        foreach (var obj in objectsInsideSphere)
         {
-            EndInteraction(interactingObject.GetComponent<IInteractable>());
-            interactingObject = null;
+            if (!currentlyDetectedObjects.Contains(obj))
+            {
+                EndInteraction(interactingObject.GetComponent<IInteractable>());
+                interactingObject = null;
+            }
         }
+        objectsInsideSphere = currentlyDetectedObjects;
+        //for (int i = 0;i < colliders.Length;i++)
+        //{
+        //    if (colliders[i].gameObject != interactingObject)
+        //    {
+
+        //    }
+        //}
+        //if (!isInCollider && interactingObject != null)
+        //{
+        //    EndInteraction(interactingObject.GetComponent<IInteractable>());
+        //    interactingObject = null;
+        //}
     }
 
     void StartInteraction(IInteractable interactable)

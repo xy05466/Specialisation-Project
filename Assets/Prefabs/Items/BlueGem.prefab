@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -6561844403922215035}
   - component: {fileID: -9128394888390770338}
   m_Layer: 0
-  m_Name: Stone4
+  m_Name: BlueGem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

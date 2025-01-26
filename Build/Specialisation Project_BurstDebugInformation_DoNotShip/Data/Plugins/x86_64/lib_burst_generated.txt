@@ -19,6 +19,7 @@ Library: C:\Users\konxi\Specialisation Project\Temp\BurstOutput\Data\Plugins\x86
 --assembly-defines=Unity.VisualScripting.Flow;
 --assembly-defines=Unity.RenderPipelines.Core.ShaderLibrary;
 --assembly-defines=Unity.ProBuilder.Poly2Tri;
+--assembly-defines=Eflatun.SceneReference;
 --assembly-defines=Unity.TextMeshPro;
 --assembly-defines=Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary;
 --assembly-defines=Unity.RenderPipelines.Universal.Runtime;
@@ -38,6 +39,7 @@ Library: C:\Users\konxi\Specialisation Project\Temp\BurstOutput\Data\Plugins\x86
 --assembly-defines=Unity.ProGrids;
 --assembly-defines=Unity.VisualScripting.Antlr3.Runtime;
 --assembly-defines=Unity.Burst.Unsafe;
+--assembly-defines=Newtonsoft.Json;
 --assembly-defines=System.Runtime;
 --assembly-defines=netstandard;
 --assembly-defines=Mono.Security;
@@ -90,6 +92,7 @@ Library: C:\Users\konxi\Specialisation Project\Temp\BurstOutput\Data\Plugins\x86
 --assembly-defines=Unity.VisualScripting.Flow;
 --assembly-defines=Unity.RenderPipelines.Core.ShaderLibrary;
 --assembly-defines=Unity.ProBuilder.Poly2Tri;
+--assembly-defines=Eflatun.SceneReference;
 --assembly-defines=Unity.TextMeshPro;
 --assembly-defines=Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary;
 --assembly-defines=Unity.RenderPipelines.Universal.Runtime;
@@ -109,6 +112,7 @@ Library: C:\Users\konxi\Specialisation Project\Temp\BurstOutput\Data\Plugins\x86
 --assembly-defines=Unity.ProGrids;
 --assembly-defines=Unity.VisualScripting.Antlr3.Runtime;
 --assembly-defines=Unity.Burst.Unsafe;
+--assembly-defines=Newtonsoft.Json;
 --assembly-defines=System.Runtime;
 --assembly-defines=netstandard;
 --assembly-defines=Mono.Security;
@@ -159,6 +163,7 @@ Library: C:\Users\konxi\Specialisation Project\Temp\BurstOutput\Data\Plugins\x86
 --assembly-defines=Unity.VisualScripting.Flow;
 --assembly-defines=Unity.RenderPipelines.Core.ShaderLibrary;
 --assembly-defines=Unity.ProBuilder.Poly2Tri;
+--assembly-defines=Eflatun.SceneReference;
 --assembly-defines=Unity.TextMeshPro;
 --assembly-defines=Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary;
 --assembly-defines=Unity.RenderPipelines.Universal.Runtime;
@@ -178,6 +183,7 @@ Library: C:\Users\konxi\Specialisation Project\Temp\BurstOutput\Data\Plugins\x86
 --assembly-defines=Unity.ProGrids;
 --assembly-defines=Unity.VisualScripting.Antlr3.Runtime;
 --assembly-defines=Unity.Burst.Unsafe;
+--assembly-defines=Newtonsoft.Json;
 --assembly-defines=System.Runtime;
 --assembly-defines=netstandard;
 --assembly-defines=Mono.Security;
@@ -234,6 +240,7 @@ Library: C:\Users\konxi\Specialisation Project\Temp\BurstOutput\Data\Plugins\x86
 --assembly-defines=Unity.VisualScripting.Flow;
 --assembly-defines=Unity.RenderPipelines.Core.ShaderLibrary;
 --assembly-defines=Unity.ProBuilder.Poly2Tri;
+--assembly-defines=Eflatun.SceneReference;
 --assembly-defines=Unity.TextMeshPro;
 --assembly-defines=Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary;
 --assembly-defines=Unity.RenderPipelines.Universal.Runtime;
@@ -253,6 +260,7 @@ Library: C:\Users\konxi\Specialisation Project\Temp\BurstOutput\Data\Plugins\x86
 --assembly-defines=Unity.ProGrids;
 --assembly-defines=Unity.VisualScripting.Antlr3.Runtime;
 --assembly-defines=Unity.Burst.Unsafe;
+--assembly-defines=Newtonsoft.Json;
 --assembly-defines=System.Runtime;
 --assembly-defines=netstandard;
 --assembly-defines=Mono.Security;

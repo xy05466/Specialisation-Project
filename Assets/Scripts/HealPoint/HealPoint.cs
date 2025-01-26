@@ -34,7 +34,7 @@ public class HealPoint : InventoryHolder, IInteractable
 
     public void EndInteraction()
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public void Interact(Interactor interactor, out bool interactSuccessful)

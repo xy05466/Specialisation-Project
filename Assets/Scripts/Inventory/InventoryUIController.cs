@@ -30,10 +30,10 @@ public class InventoryUIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (inventoryPanel.gameObject.activeInHierarchy && Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            inventoryPanel.gameObject.SetActive(false);
-        }
+        //if (inventoryPanel.gameObject.activeInHierarchy && Keyboard.current.escapeKey.wasPressedThisFrame)
+        //{
+        //    inventoryPanel.gameObject.SetActive(false);
+        //}
         if (Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
         {
             if (inventoryPanel.gameObject.activeInHierarchy)
@@ -44,6 +44,7 @@ public class InventoryUIController : MonoBehaviour
             {
                 healPanel.transform.parent.gameObject.gameObject.SetActive(false);
             }
+            itemGroup.gameObject.SetActive(false);
             //if (statusDisplay.gameObject.activeInHierarchy)
             //{
             //    statusDisplay.gameObject.SetActive(false);
@@ -58,7 +59,7 @@ public class InventoryUIController : MonoBehaviour
     void DisplayInventory(InventorySystem invToDisplay)
     {
         inventoryPanel.transform.parent.gameObject.SetActive(true);
-        inventoryPanel.transform.parent.gameObject.SetActive(true);
+        //inventoryPanel.transform.parent.gameObject.SetActive(true);
         itemGroup.gameObject.SetActive(true);
         inventoryPanel.RefreshDynamicInventory(invToDisplay);
     }

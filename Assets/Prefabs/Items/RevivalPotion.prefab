@@ -9732,7 +9732,7 @@ GameObject:
   - component: {fileID: 7740188855215628636}
   - component: {fileID: 2168207280760446261}
   m_Layer: 0
-  m_Name: Bottle_Endurance
+  m_Name: RevivalPotion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9804,7 +9804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d1e8604e55d344393453cdb869c53a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 6bbfc12e-7d97-4f48-8635-f6d551aa15c9
+  id: b67e8205-ad5a-4757-92dd-bb74f3b652d5
 --- !u!114 &2168207280760446261
 MonoBehaviour:
   m_ObjectHideFlags: 0

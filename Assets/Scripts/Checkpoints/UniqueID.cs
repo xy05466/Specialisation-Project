@@ -13,7 +13,7 @@ public class UniqueID : MonoBehaviour
     public string ID => id;
     // Start is called before the first frame update
 
-    private void OnValidate()
+    private void Start()
     {
         if (idDatabase.ContainsKey(id))
         {
@@ -33,7 +33,7 @@ public class UniqueID : MonoBehaviour
         }
     }
 
-    private void Generate()
+    public void Generate()
     {
         id = Guid.NewGuid().ToString();
         idDatabase.Add(id,this.gameObject);

@@ -10,7 +10,8 @@ public class ItemGenerator : MonoBehaviour
     void Start()
     {
         int rand = Random.Range(0, items.Count);
-        Instantiate(items[rand], gameObject.transform);
+        GameObject go = Instantiate(items[rand], gameObject.transform);
+        //go.GetComponent<UniqueID>().Generate();
     }
 
     // Update is called once per frame

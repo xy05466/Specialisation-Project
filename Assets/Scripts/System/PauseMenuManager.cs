@@ -6,8 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    public GameObject invMenu;
-    public GameObject statusMenu;
+    public GameObject chestMenu;
+    public GameObject healMenu;
+    public GameObject normalStatusMenu;
+    public GameObject battleStatusMenu;
     public GameObject saveLoad;
     //public GameObject status;
     //private Rigidbody rb;
@@ -48,13 +50,16 @@ public class PauseMenuManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            invMenu.SetActive(!invMenu.activeSelf);
-            statusMenu.SetActive(!statusMenu.activeSelf);
+            chestMenu.SetActive(!chestMenu.activeSelf);
+            normalStatusMenu.SetActive(!normalStatusMenu.activeSelf);
+            battleStatusMenu.SetActive(!battleStatusMenu.activeSelf);
         }
         if (Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
         {
-            invMenu.SetActive(false);
-            statusMenu.SetActive(false);
+            chestMenu.SetActive(false);
+            healMenu.SetActive(false);
+            normalStatusMenu.SetActive(false);
+            battleStatusMenu.SetActive(false);
         }
     }
 }

@@ -66,20 +66,20 @@ public class EncounterManager : MonoBehaviour
         {
             float distanceToTarget = Vector3.Distance(targetPosition, transform.position);
             float rand = Random.Range(1, 101);
-            //if (rand < distanceToTarget * 0.1f && !inEncounter)
-            //{
-            //    if (SceneManager.GetActiveScene().name == "SampleScene")
-            //    {
-            //        inEncounter = true;
-            //        saveGameManager.TempSaveData();
-            //        Debug.Log("encounter" + encounternum);
-            //        PlayerPrefs.SetString("SceneName", SceneManager.GetActiveScene().name);
-            //        PlayerPrefs.SetString("EncounterPos", this.transform.localPosition.ToString());
-            //        encounternum++;
-            //        targetPosition = transform.position;
-            //        SceneLoader.instance.LoadLevel("BattleArena");
-            //    }
-            //}
+            if (rand < distanceToTarget * 0.1f && !inEncounter)
+            {
+                if (SceneManager.GetActiveScene().name == "SampleScene")
+                {
+                    inEncounter = true;
+                    saveGameManager.TempSaveData();
+                    Debug.Log("encounter" + encounternum);
+                    PlayerPrefs.SetString("SceneName", SceneManager.GetActiveScene().name);
+                    PlayerPrefs.SetString("EncounterPos", this.transform.localPosition.ToString());
+                    encounternum++;
+                    targetPosition = transform.position;
+                    SceneLoader.instance.LoadLevel("BattleArena");
+                }
+            }
         }
         else
         {
