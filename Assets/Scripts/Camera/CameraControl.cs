@@ -7,7 +7,7 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class CameraControl : MonoBehaviour
 {
-    public GameObject camera;
+    private Camera camera;
     private Vector2 _mousePosition = Vector2.zero;
     public float speed = 50f;
     private float rotationX;
@@ -19,10 +19,11 @@ public class CameraControl : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        camera = Camera.main;
         rotationX = camera.transform.rotation.eulerAngles.x;
         virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         layermask = LayerMask.GetMask("Walls");
-        peg.transform.RotateAround(transform.position, Vector3.up, virtualCamera.transform.localEulerAngles.y);
+        //peg.transform.RotateAround(transform.position, Vector3.up, virtualCamera.transform.localEulerAngles.y);
     }
 
     // Update is called once per frame
@@ -33,17 +34,20 @@ public class CameraControl : MonoBehaviour
             //Camera.transform.Rotate(new Vector3(0, speed * Time.deltaTime, 0f));
             //Camera.transform.rotation = Quaternion.Euler(rotationX, transform.rotation.eulerAngles.y, 0f);
             camera.transform.RotateAround(transform.position,Vector3.up, speed * Time.deltaTime);
-            RotatePeg(true);
+            //RotatePeg(true);
         }
         else if (Input.GetKey(KeyCode.O))
         {
             //Camera.transform.Rotate(new Vector3(0, -speed * Time.deltaTime, 0f));
             //Camera.transform.rotation = Quaternion.Euler(rotationX, transform.rotation.eulerAngles.y, 0f);
             camera.transform.RotateAround(transform.position, Vector3.up, -speed * Time.deltaTime);
-            RotatePeg(false);
-            
+            //RotatePeg(false);
         }
-        SetTransparentObject();
+        //else
+        //{
+        //    camera.transform.localRotation = Quaternion.Euler(0.0f, gameObject.transform.rotation.y * -1.0f, 0.0f);
+        //}
+        //SetTransparentObject();
     }
 
     private void RotatePeg(bool isIncrease)

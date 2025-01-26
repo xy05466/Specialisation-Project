@@ -11,14 +11,15 @@ public class MapManager : MonoBehaviour
 {
     public GameObject tileParent;
     public Canvas canvas;
-    private RectTransform mapParent;
+    public GameObject mapParent;
+    private RectTransform mapOrigin;
     public List<RectTransform> mapIcons;
-    public RectTransform image;
-    public RectTransform regularDoor;
-    public RectTransform oneWayDoor;
-    public RectTransform lockedDoor;
+    //public RectTransform image;
+    //public RectTransform regularDoor;
+    //public RectTransform oneWayDoor;
+    //public RectTransform lockedDoor;
 
-    public CinemachineVirtualCamera virtualCamera;
+    public GameObject virtualCamera;
     public int height;
     public int width;
     public TMP_Text playerPos;
@@ -31,6 +32,9 @@ public class MapManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //virtualCamera.gameObject.transform.rotation = Quaternion.Euler(90f, 90f, 0f);
+        virtualCamera = GameObject.FindWithTag("VirtualCamera");
+
         cam = Camera.main;
         tilesCount = tileParent.transform.childCount;
         tiles = new List<TileInfo>();
@@ -43,6 +47,7 @@ public class MapManager : MonoBehaviour
                 TileInfo tileInfo = new TileInfo();
                 tileInfo.tilePos = new Vector2(child.position.x, child.position.z);
                 tileInfo.tileRot = child.localEulerAngles;
+                
                 tileInfo.tag = child.tag;
                 tiles.Add(tileInfo);
             }
@@ -59,54 +64,52 @@ public class MapManager : MonoBehaviour
         {
             if (n == 0)
             {
-                mapParent = Instantiate(image, new Vector3(tiles[0].tilePos.x, image.anchoredPosition.y + 50, tiles[0].tilePos.y) * 0.2f, image.gameObject.transform.rotation, canvas.transform);
-                map.Add(mapParent);
-                map[0].gameObject.SetActive(false);
+                mapOrigin = Instantiate(mapIcons[1], new Vector3(tiles[0].tilePos.x, mapIcons[1].anchoredPosition.y + 50, tiles[0].tilePos.y) * 0.2f, mapIcons[1].gameObject.transform.rotation, mapParent.transform);
+                mapOrigin.anchoredPosition3D = new Vector3(mapOrigin.anchoredPosition3D.x, mapOrigin.anchoredPosition3D.y, 0);
+                foreach (Image image in mapOrigin.gameObject.GetComponentsInChildren<Image>())
+                {
+                    image.enabled = false;
+                }
+               //mapOrigin.gameObject.GetComponentInChildren<Image>().enabled = false;
+                map.Add(mapOrigin);
                 n++;
                 continue;
             }
             switch (child.tag)
             {
                 case "Floor":
-                    tiletoCreate = mapIcons[0];
-                    break;
-                case "RegularDoor":
                     tiletoCreate = mapIcons[1];
                     break;
-                case "OneWayDoor":
+                case "RegularDoor":
                     tiletoCreate = mapIcons[2];
                     break;
-                case "LockedDoor":
+                case "OneWayDoor":
                     tiletoCreate = mapIcons[3];
                     break;
+                case "LockedDoor":
+                    tiletoCreate = mapIcons[4];
+                    break;
             }
-            //if (child.tag == "Floor")
-            //{
-            //    tiletoCreate = image;
-            //}
-            //else if (child.tag == "RegularDoor")
-            //{
-            //    tiletoCreate = regularDoor;
-            //}
-            //else if (child.tag == "OneWayDoor")
-            //{
-            //    tiletoCreate = oneWayDoor;
-            //}
-            //else if (child.tag == "LockedDoor")
-            //{
-            //    tiletoCreate = lockedDoor;
-            //}
-            map.Add(Instantiate(tiletoCreate, new Vector3(child.tilePos.x, tiletoCreate.anchoredPosition.y, child.tilePos.y) * 0.2f, Quaternion.identity, mapParent.transform));
-            map[n].transform.position = new Vector3(map[n].transform.position.x, mapParent.transform.position.y, map[n].transform.position.z);
+            map.Add(Instantiate(tiletoCreate, new Vector3(child.tilePos.x, tiletoCreate.anchoredPosition.y, child.tilePos.y) * 0.2f, Quaternion.identity, mapOrigin.transform));
+            map[n].transform.position = new Vector3(map[n].transform.position.x, mapOrigin.transform.position.y, map[n].transform.position.z);
             map[n].localRotation = Quaternion.Euler(0, child.tileRot.x, child.tileRot.y);
-
-            //map[n].rotation = child.tileRot;
+            //map[n].gameObject.GetComponentInChildren<Image>().enabled = false;
+            foreach (Image image in map[n].gameObject.GetComponentsInChildren<Image>())
+            {
+                image.enabled = false;
+            }
             n++;
         }
-        mapParent.anchoredPosition = image.anchoredPosition;
+        mapOrigin.anchoredPosition = mapIcons[1].anchoredPosition;
+        mapIcons[0].transform.position = new Vector3(map[0].transform.position.x, mapOrigin.transform.position.y, map[0].transform.position.z);
+
         virtualCamera.gameObject.transform.rotation = Quaternion.Euler(45f, 45f, 0f);
         foreach (RectTransform icon in mapIcons)
         {
+            if (icon.name == "PlayerIcon")
+            {
+                continue;
+            }
             icon.gameObject.SetActive(false);
         }
     }
@@ -121,18 +124,31 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    public void CheckTile(Vector2 tilePos)
+    public void CheckPlayerPos(Vector2 tilePos)
     {
+        int i = 0;
         foreach(TileInfo child in tiles)
         {
             if (tilePos == child.tilePos)
             {
                 Debug.Log(tilePos);
-                Vector3 screenPos = (RectTransformUtility.WorldToScreenPoint(Camera.main, tilePos));
                 playerPos.text = tilePos.ToString();
-                //image.anchoredPosition = screenPos / 5;
+                mapIcons[0].anchoredPosition = map[i].anchoredPosition;
+                if (!map[i].gameObject.GetComponent<Image>().enabled)
+                {
+                    foreach (Image image in map[i].gameObject.GetComponentsInChildren<Image>())
+                    {
+                        image.enabled = true;
+                    }
+                }
             }
+            i++;
         }
+    }
+
+    public void CheckPlayerRot(float playerRot)
+    {
+        mapIcons[0].localRotation = Quaternion.Euler(0, 0, -playerRot);
     }
 
     private void CreateGrid()

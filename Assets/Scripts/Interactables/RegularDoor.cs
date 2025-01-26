@@ -1,3 +1,4 @@
+using Eflatun.SceneReference;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class RegularDoor : MonoBehaviour
 
     private bool isOpened;
     private Vector3 prevPlayerPos;
+    [SerializeField] SceneReference scene;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,12 +33,11 @@ public class RegularDoor : MonoBehaviour
                 isOpened = true;
                 if (other.transform.position.z > transform.position.z)
                 {
-
                     animator.CrossFade(openBack, 0.1f);
+
                 }
                 else
                 {
-                    
                     animator.CrossFade(openFront, 0.1f);
                 }
                 

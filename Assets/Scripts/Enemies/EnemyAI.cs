@@ -18,7 +18,7 @@ public class EnemyAI : MonoBehaviour
     {
         ATTACK,
         DEFEND,
-        FLEE
+        ENDTURN
     }
 
     private float rand;

@@ -8,26 +8,41 @@ public class PlayerMovementController : MonoBehaviour, PlayerInput.IPlayerAction
     private Vector3 _direction;
     private Quaternion _rotation;
 
-    private CharacterController _characterController;
+    public CharacterController _characterController;
     private bool isMoving;
 
     [SerializeField] private float movementSpeed;
     [SerializeField] private float rotationSpeed;
     [SerializeField] private AnimationController animCon;
-    [SerializeField] private Camera camera;
+    private Camera camera;
+
+    private void Start()
+    {
+        camera = Camera.main;
+    }
 
     private void Awake()
     {
         // Create a rotational matrix with 45def offset on Y
         //_isometricInputMatrix = Matrix4x4.Rotate(Quaternion.Euler(0f, 45f, 0f));
-        _characterController = GetComponent<CharacterController>();
+        //_characterController = GetComponent<CharacterController>();
+        camera = Camera.main;
     }
 
     private void Update()
     {
         _characterController.Move(_direction * movementSpeed * Time.deltaTime);
         float singleStep = movementSpeed * Time.deltaTime;
-        Vector3 newDirection = Vector3.RotateTowards(transform.forward,_direction, singleStep, 0.0f);
+        Vector3 newDirection = Vector3.RotateTowards(transform.forward, _direction, singleStep, 0.0f);
+        transform.parent.rotation = Quaternion.LookRotation(newDirection);
+    }
+
+    public void UpdateMovement()
+    {
+        _characterController.Move(_direction * movementSpeed * Time.deltaTime);
+        
+        float singleStep = movementSpeed * Time.deltaTime;
+        Vector3 newDirection = Vector3.RotateTowards(transform.forward, _direction, singleStep, 0.0f);
         transform.rotation = Quaternion.LookRotation(newDirection);
     }
 

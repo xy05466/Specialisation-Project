@@ -40,6 +40,7 @@ public class StatusHUD : MonoBehaviour
         float currentMana = status.mana * (100 / status.maxMana);
 
         hpBar.fillAmount = currentHealth / 100;
+        easeHpBar.fillAmount = hpBar.fillAmount;
         hpValue.SetText(status.health + "/" + status.maxHealth);
 
         mpBar.fillAmount = currentMana / 100;
@@ -55,6 +56,12 @@ public class StatusHUD : MonoBehaviour
             mpBar.fillAmount = currentMana * (100 / maxMana) / 100;
             mpValue.SetText(currentMana + "/" + maxMana);
 
+    }
+
+    public void SimpleSetHP(CharacterStatus status, float hp, bool isIncrease)
+    {
+        hpBar.fillAmount = (status.health * (100 / status.maxHealth)) / 100;
+        hpValue.SetText(status.health + "/" + status.maxHealth);
     }
 
     public IEnumerator SetHP(UnitStatus status, float hp, bool isIncrease)
@@ -93,13 +100,6 @@ public class StatusHUD : MonoBehaviour
         easeHpBar.fillAmount = hpBar.fillAmount;
         elapsedTime = 0;
         yield return null;
-        //while (hpBar.fillAmount != easeHpBar.fillAmount)
-        //{
-        //    easeHpBar.fillAmount = Mathf.Lerp(easeHpBar.fillAmount, hpBar.fillAmount, lerpSpeed);
-        //}
-
-        //StartCoroutine(GraduallySetHPBar(status, hp, isIncrease, 10, 0.05f, hpBar));
-
     }
 
     

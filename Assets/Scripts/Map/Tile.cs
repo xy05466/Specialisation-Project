@@ -27,11 +27,19 @@ public class Tile : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.tag == "Player" && !isPlayerOn)
+        if (collision.gameObject.tag == "NormalPresence")
         {
-            mapManager.CheckTile(new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z));
-            isPlayerOn = true;
-            Debug.Log(this.name);
+            mapManager.CheckPlayerRot(collision.transform.eulerAngles.y);
+            if (!isPlayerOn)
+            {
+                mapManager.CheckPlayerPos(new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z));
+                isPlayerOn = true;
+                if (!discovered)
+                {
+                    discovered = true;
+                }
+                Debug.Log(this.name);
+            }
         }
     }
 

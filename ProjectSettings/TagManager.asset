@@ -12,6 +12,8 @@ TagManager:
   - RegularDoor
   - OneWayDoor
   - LockedDoor
+  - NormalPresence
+  - BattlePresence
   layers:
   - Default
   - TransparentFX
@@ -20,8 +22,8 @@ TagManager:
   - Water
   - UI
   - Walls
-  - 
-  - 
+  - Interactable
+  - Player
   - 
   - 
   - 

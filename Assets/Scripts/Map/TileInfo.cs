@@ -7,6 +7,7 @@ using UnityEngine.TextCore.Text;
 public class TileInfo : IComparable
 {
     public Vector2 tilePos;
+    public Vector2 mapPos;
     public Vector3 tileRot;
     public String tag;
 

@@ -17,6 +17,8 @@ public class CharacterStatus : ScriptableObject
     public Type weakness;
     public Type heal;
     public bool isRecruited;
+    public bool isMainPlayer;
+    public List<CharacterStatus> party;
 
     public enum Condition
     {
