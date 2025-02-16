@@ -36,15 +36,14 @@ public class MapManager : MonoBehaviour
         //check if map data for this scene exists, if not generate new map
         string mappath = Application.persistentDataPath + "/SaveData/" + SceneManager.GetActiveScene().name + ".sav";
 
+        if (!File.Exists(mappath))
+        {
             GenerateTiles();
             GenerateMap();
-        //if (!File.Exists(mappath))
-        //{
+        }
 
-        //}
 
-         
-       
+
         //tilesCount = tileParent.transform.childCount;
         //tiles = new List<TileInfo>();
         //map = new List<RectTransform>();
@@ -64,7 +63,7 @@ public class MapManager : MonoBehaviour
         //tiles.Sort((v1, v2) => v1.tilePos.y != v2.tilePos.y ? v1.tilePos.y.CompareTo(v2.tilePos.y) : v1.tilePos.x.CompareTo(v2.tilePos.x));
         //GenerateMap();
 
-       
+
     }
 
     private void Awake()

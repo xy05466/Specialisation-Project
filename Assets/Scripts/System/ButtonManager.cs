@@ -9,11 +9,9 @@ public class ButtonManager : MonoBehaviour
     public Button continueButton;
     public Button menuButton;
     public Button exitButton;
-    private SceneManagement sceneManagement;
     // Start is called before the first frame update
     void Start()
     {
-        sceneManagement = GameObject.FindWithTag("SceneManager").GetComponent<SceneManagement>();
         if (newGameButton != null)
         {
             newGameButton.onClick.AddListener(LoadOverworldDungeon);
@@ -40,6 +38,7 @@ public class ButtonManager : MonoBehaviour
 
     private void LoadStartScene()
     {
+        
         SceneManagement.Instance.LoadScene("Start");
     }
 
