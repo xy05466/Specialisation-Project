@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class InventoryUIController : MonoBehaviour
 {
@@ -15,17 +16,38 @@ public class InventoryUIController : MonoBehaviour
         //itemGroup.SetActive(false);
         inventoryPanel.transform.parent.gameObject.SetActive(false);
         healPanel.transform.parent.gameObject.SetActive(false);
+        itemGroup.transform.gameObject.SetActive(false);
+        //itemButton.SetActive(false);
     }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+
+        if (!scene.name.Contains("BattleArena"))
+        {
+            inventoryPanel.transform.parent.gameObject.SetActive(false);
+            healPanel.transform.parent.gameObject.SetActive(false);
+            itemGroup.transform.gameObject.SetActive(false);
+        }
+  //inventoryPanel.transform.parent.gameObject.SetActive(false);
+                //healPanel.transform.parent.gameObject.SetActive(false);
+                //itemGroup.transform.gameObject.SetActive(false);
+                Debug.Log("OnSceneLoaded: " + scene.name);
+    }
+
+
     private void OnEnable()
     {
         InventoryHolder.OnDynamicInventoryDisplayRequested += DisplayInventory;
         InventoryHolder.OnHealDisplayRequested += DisplayHealPoint;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         InventoryHolder.OnDynamicInventoryDisplayRequested -= DisplayInventory;
         InventoryHolder.OnHealDisplayRequested -= DisplayHealPoint;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     // Update is called once per frame
     void Update()

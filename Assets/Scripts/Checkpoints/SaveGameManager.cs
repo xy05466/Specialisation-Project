@@ -1,5 +1,7 @@
+using Assets.Scripts.Common;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,12 +9,50 @@ public class SaveGameManager : MonoBehaviour
 {
     public static SaveData data;
     public static TempSaveData tempData;
-    private bool isLoading;
+    public static MapSaveData mapData;
+    public static List<CharacterStatus> partyStatusData;
+    public GameObject saveLoad;
+    private SceneManagement sceneManagement;
+
+
+    private void Start()
+    {
+        //SaveLoad.OnLoadScene += StartLoadScene;
+    }
+    private void OnEnable()
+    {
+        sceneManagement = SceneManagement.Instance;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    IEnumerator DisableSaveLoad()
+    {
+        yield return new WaitForSeconds(3);
+        this.SetActive(false);
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name.Contains("Room") || scene.name.Contains("BattleArena"))
+        {
+            saveLoad.SetActive(false);
+        }
+        Debug.Log("OnSceneLoaded: " + scene.name);
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("OnDisable");
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
 
     private void Awake()
     {
         data = new SaveData();
         tempData = new TempSaveData();
+        mapData = new MapSaveData();
+        partyStatusData = new List<CharacterStatus>();
+
         SaveLoad.OnLoadGame += LoadData;
         SaveLoad.OnTempLoadGame += TempLoadData;
     }
@@ -25,49 +65,41 @@ public class SaveGameManager : MonoBehaviour
     public void SaveData()
     {
         var saveData = data;
-        PlayerPrefs.SetString("CheckpointPos", transform.position.ToString());
+        var map = mapData;
+        var partyStatus = partyStatusData;
+        PlayerPrefs.SetString("LastPos", transform.parent.position.ToString());
         PlayerPrefs.SetString("SceneName", SceneManager.GetActiveScene().name);
-        SaveLoad.Save(saveData);
+        SaveLoad.Save(saveData, map, partyStatus);
     }
 
     public void TempSaveData()
     {
         var tempdata = tempData;
-        SaveLoad.TempSave(tempdata);
-    }
-
-    public void StartLoadSceneAsync()
-    {
-        StartCoroutine(LoadSceneAsync());
-    }
-
-    IEnumerator LoadSceneAsync()
-    {
-        isLoading = true;
-        AsyncOperation operation = SceneManager.LoadSceneAsync(PlayerPrefs.GetString("SceneName"));
-        while (!operation.isDone)
-        {
-            Debug.Log(operation.progress);
-            yield return null;
-        }
-        isLoading = false;
+        var map = mapData;  
+        SaveLoad.TempSave(tempdata, map);
     }
 
     public void LoadData(SaveData _data)
     {
-        StartCoroutine(StartLoadData(data));
+        data = _data;
     }
 
-    IEnumerator StartLoadData(SaveData _data)
+    public void StartLoadScene(Vector3 nextSpawnPos, string sceneName)
     {
-        StartLoadSceneAsync();
-        while (isLoading)
+        StartCoroutine(LoadScene(nextSpawnPos, sceneName));
+    }
+
+    IEnumerator LoadScene(Vector3 nextSpawnPos, string sceneName)
+    {
+        while (sceneManagement.isLoading) { yield return null; }
+
+        sceneManagement.LoadScene(sceneName);
+        while (sceneManagement.isLoading)
         {
             yield return null;
         }
-        transform.position = StringToVector3(PlayerPrefs.GetString("CheckpointPos"));
-        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        data = _data;
+        transform.parent.position = nextSpawnPos;
+        Debug.Log("scene finished loading");
     }
 
     public void TempLoadData(TempSaveData _data)
@@ -75,14 +107,29 @@ public class SaveGameManager : MonoBehaviour
         tempData = _data;
     }
 
-    public void TryLoadData()
+    public void StartTryLoadData()
     {
-        SaveLoad.Load();
+        StartCoroutine(TryLoadData());
+    }
+
+    public IEnumerator TryLoadData()
+    {
+        while (sceneManagement.isLoading) { yield return null; }
+
+        sceneManagement.LoadScene(PlayerPrefs.GetString("SceneName"));
+        while (sceneManagement.isLoading)
+        {
+            yield return null;
+        }
+        Debug.Log(PlayerPrefs.GetString("LastPos"));
+        transform.parent.position = StringToVector3(PlayerPrefs.GetString("LastPos"));
+        Debug.Log(transform.parent.position + "data finished loading");
+        SaveLoad.Load(SceneManager.GetActiveScene().name);
     }
 
     public void TryTempLoadData()
     {
-        SaveLoad.TempLoad();
+        SaveLoad.TempLoad(SceneManager.GetActiveScene().name);
     }
 
     public static Vector3 StringToVector3(string sVector)

@@ -12,21 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4b702213a85421478674d5d4199601c, type: 3}
   m_Name: Player1
   m_EditorClassIdentifier: 
-  charName: Player1
+  charName: Ganful
   position:
   - 0
   - 0
   characterGameObject: {fileID: 1606651742066350199, guid: 1b4b2150e0d64854c84b00d5876b560a, type: 3}
   level: 1
-  maxHealth: 100
-  maxMana: 50
-  health: 100
-  mana: 50
+  maxHealth: 200
+  maxMana: 30
+  health: 200
+  mana: 30
   skills:
   - {fileID: 11400000, guid: 046cd13a87b6b9649acc2c5592741efc, type: 2}
   - {fileID: 11400000, guid: 81af300d61fe02940aa60389904ab4fe, type: 2}
-  weakness: 2
-  heal: 1
+  weakness: 1
+  heal: 0
   isRecruited: 1
+  isMainPlayer: 0
   party: []
   condition: 0
+  buff: 0

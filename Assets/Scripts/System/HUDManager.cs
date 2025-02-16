@@ -12,13 +12,13 @@ public class HUDManager : MonoBehaviour
 
     private void OnEnable()
     {
-        BattleSystemManager.OnHealthChanged += BattleUpdateHP;
 
-        statusHUD[0].SetName(playerStatus);
-        statusHUD[0].SimpleSetHP(playerStatus);
-        statusHUD[0].SimpleSetMP(playerStatus);
-        statusHUD[0].SetStatusActive(true);
-        statusHUD[0].SetOverlay(playerStatus.condition);
+        //statusHUD[0].SetName(playerStatus);
+        //statusHUD[0].SimpleSetHP(playerStatus);
+        //statusHUD[0].SimpleSetMP(playerStatus);
+        //statusHUD[0].SetStatusActive(true);
+        //statusHUD[0].SetConditionOverlay(playerStatus.condition);
+        //status
 
 
         for (int i = 0; i < playerStatus.party.Count; i++)
@@ -27,14 +27,10 @@ public class HUDManager : MonoBehaviour
             statusHUD[i].SimpleSetHP(playerStatus.party[i]);
             statusHUD[i].SimpleSetMP(playerStatus.party[i]);
             statusHUD[i].SetStatusActive(playerStatus.party[i].isRecruited);
-            statusHUD[i].SetOverlay(playerStatus.party[i].condition);
-            
+            statusHUD[i].SetConditionOverlay(playerStatus.party[i].condition);
+            statusHUD[i].SetBuffOverlay(playerStatus.party[i].buff);
 
         }
-    }
-    private void OnDisable()
-    {
-        BattleSystemManager.OnHealthChanged -= BattleUpdateHP;
     }
 
         // Update is called once per frame
@@ -51,26 +47,31 @@ public class HUDManager : MonoBehaviour
 
     public SimpleStatusHUD FindHUD(UnitStatus charStatus)
     {
-        SimpleStatusHUD foundPlayer = statusHUD.FirstOrDefault(i => i.name.text == charStatus.name);
+        SimpleStatusHUD foundPlayer = statusHUD.FirstOrDefault(i => i.name.text == charStatus.charName);
         return foundPlayer;
     }
+
+
 
     public void SimpleUpdateHP(CharacterStatus charStatus)
     {
         FindHUD(charStatus).SimpleSetHP(charStatus);
     }
 
-    public void UpdateOverlay(CharacterStatus charStatus)
+    public void UpdateConditionOverlay(CharacterStatus charStatus)
     {
-        FindHUD(charStatus).SetOverlay(charStatus.condition);
+        FindHUD(charStatus).SetConditionOverlay(charStatus.condition);
+    }
+
+    public void UpdateBuffOverlay(CharacterStatus charStatus)
+    {
+        FindHUD(charStatus).SetBuffOverlay(charStatus.buff);
     }
 
     public void SimpleUpdateMP(CharacterStatus charStatus)
     {
         FindHUD(charStatus).SimpleSetMP(charStatus);
     }
-
-
 
     public void BattleUpdateHP(UnitStatus charStatus)
     {

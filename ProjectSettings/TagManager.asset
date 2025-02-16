@@ -14,6 +14,13 @@ TagManager:
   - LockedDoor
   - NormalPresence
   - BattlePresence
+  - IgnoreTheme
+  - Button
+  - LookAround
+  - SaveGame
+  - RoomDoor
+  - SubKey
+  - SceneManager
   layers:
   - Default
   - TransparentFX
@@ -24,7 +31,7 @@ TagManager:
   - Walls
   - Interactable
   - Player
-  - 
+  - SaveGame
   - 
   - 
   - 

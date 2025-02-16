@@ -1,3 +1,4 @@
+using Eflatun.SceneReference;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -8,9 +9,10 @@ public class PauseMenuManager : MonoBehaviour
 {
     public GameObject chestMenu;
     public GameObject healMenu;
+    public GameObject saveLoadMenu;
     public GameObject normalStatusMenu;
     public GameObject battleStatusMenu;
-    public GameObject saveLoad;
+    [SerializeField] private SceneReference mySceneReference;
     //public GameObject status;
     //private Rigidbody rb;
     // Start is called before the first frame update
@@ -27,13 +29,11 @@ public class PauseMenuManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name.Contains("Room"))
+        if (scene.name.Contains("Overworld") || scene.name.Contains("Room"))
         {
-            saveLoad.SetActive(false);
-        }
-        else if (scene.name.Contains("SampleScene"))
-        {
-            saveLoad.SetActive(true);
+            normalStatusMenu.SetActive(false);
+            battleStatusMenu.SetActive(false);
+            saveLoadMenu.SetActive(false);
         }
         Debug.Log("OnSceneLoaded: " + scene.name);
     }
@@ -44,20 +44,26 @@ public class PauseMenuManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    public void returnToMenu()
+    {
+        SceneManagement.Instance.LoadScene(mySceneReference.Name);
+    }
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            chestMenu.SetActive(!chestMenu.activeSelf);
+            //chestMenu.SetActive(!chestMenu.activeSelf);
             normalStatusMenu.SetActive(!normalStatusMenu.activeSelf);
             battleStatusMenu.SetActive(!battleStatusMenu.activeSelf);
+            saveLoadMenu.SetActive(!saveLoadMenu.activeSelf);
         }
         if (Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
         {
             chestMenu.SetActive(false);
             healMenu.SetActive(false);
+            saveLoadMenu.SetActive(false);
             normalStatusMenu.SetActive(false);
             battleStatusMenu.SetActive(false);
         }

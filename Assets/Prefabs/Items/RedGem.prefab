@@ -100,6 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 6c01ce8f88756a644950b55c09c9a7aa, type: 2}
   amount: 1
+  collectSound: {fileID: 8300000, guid: fed041cddafd8fa4c980a61f82ad7852, type: 3}
   itemSaveData:
     inventoryItemData: {fileID: 0}
 --- !u!114 &-8821502395509649187

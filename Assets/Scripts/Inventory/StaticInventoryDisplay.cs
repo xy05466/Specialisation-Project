@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StaticInventoryDisplay : InventoryDisplay
 {
@@ -14,12 +15,27 @@ public class StaticInventoryDisplay : InventoryDisplay
         //    inventorynventoryHolder;
         //    //inventoryHolder = go.transform.GetChild(0).GetComponent<InventoryHolder>();
         //}
-        InventoryHolder.OnPlayerInventoryChanged += RefreshStaticDisplay;
+        //InventoryHolder.OnPlayerInventoryChanged += RefreshStaticDisplay;
+        //SceneManager.sceneLoaded += OnSceneLoaded;
+        //AssignSlot(inventorySystem);
     }
+
+    //void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    //{
+    //    InventoryHolder.OnPlayerInventoryChanged += RefreshStaticDisplay;
+    //}
 
     private void OnDisable()
     {
         InventoryHolder.OnPlayerInventoryChanged -= RefreshStaticDisplay;
+        //SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void Awake()
+    {
+        //RefreshStaticDisplay();
+        InventoryHolder.OnPlayerInventoryChanged += RefreshStaticDisplay;
+        //AssignSlot(inventorySystem);
     }
 
     protected override void Start()
@@ -41,6 +57,7 @@ public class StaticInventoryDisplay : InventoryDisplay
 
     public override void AssignSlot(InventorySystem invToDisplay)
     {
+        
         slotDictionary = new Dictionary<InventorySlotUI, InventorySlot>();
         if (slots.Length != inventorySystem.InventorySize)
         {

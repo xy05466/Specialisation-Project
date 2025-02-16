@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "HealthStatusData", menuName = "StatusObjects/Health", order = 1)]
+[System.Serializable]
 public class CharacterStatus : ScriptableObject
 {
     public string charName = "name";
@@ -25,5 +27,15 @@ public class CharacterStatus : ScriptableObject
         NORMAL,
         DEAD
     }
+
     public Condition condition;
+
+    public enum Buff
+    {
+        NORMAL,
+        INCMP,
+        INCHP
+    }
+
+    public Buff buff;
 }

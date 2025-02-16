@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 3950446516581520540}
   - component: {fileID: 2822660741044140936}
   - component: {fileID: 532404350036049707}
+  - component: {fileID: 3467321572187142229}
+  - component: {fileID: 4529327954958175275}
   m_Layer: 0
   m_Name: Door_key
   m_TagString: Key
@@ -30,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
   m_LocalPosition: {x: 50, y: 1.331, z: 26}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -63,8 +65,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -6436591170870349062, guid: 13c9b35bc80362b4f966b1102b10bde8, type: 3}
-  - {fileID: -6436591170870349062, guid: 13c9b35bc80362b4f966b1102b10bde8, type: 3}
+  - {fileID: 2100000, guid: 25d21d0c41fa7ca43a8629122d4b99da, type: 2}
+  - {fileID: 2100000, guid: 25d21d0c41fa7ca43a8629122d4b99da, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -126,5 +128,30 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.1833308, y: 0.6552672, z: 0.49001443}
-  m_Center: {x: -0.060889006, y: 0.009990027, z: 0.06998148}
+  m_Size: {x: 1, y: 1, z: 0.49001443}
+  m_Center: {x: -0.060889006, y: 0, z: 0.06998148}
+--- !u!114 &3467321572187142229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4498622287762464225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d1e8604e55d344393453cdb869c53a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: fe0656fa-5596-4f42-aede-551388bc8d79
+--- !u!114 &4529327954958175275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4498622287762464225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 777c3f7c508096242abcdc5bd0d38a16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

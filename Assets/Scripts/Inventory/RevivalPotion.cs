@@ -5,6 +5,15 @@ using UnityEngine;
 
 public class RevivalPotion : MonoBehaviour, IUsableItems
 {
+    string usedName;
+    public Action AssignName(string newName)
+    {
+        return delegate
+        {
+            usedName = newName;
+        };
+    }
+
     Action IUsableItems.EndUse()
     {
         return delegate
@@ -13,11 +22,12 @@ public class RevivalPotion : MonoBehaviour, IUsableItems
         };
     }
 
-    Action IUsableItems.UseItem(string name)
+    Action IUsableItems.UseItem()
     {
         return delegate
         {
-            PlayerItemManager.Instance.SetPartyCondition(name);
+            Debug.Log(usedName);
+            PlayerItemManager.Instance.SetPartyCondition(usedName);
             
             //Debug.Log("use item");
         };

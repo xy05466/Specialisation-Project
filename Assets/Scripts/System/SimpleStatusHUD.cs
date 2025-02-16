@@ -12,6 +12,8 @@ public class SimpleStatusHUD : MonoBehaviour
     public Image mpBar;
     public Image easeMpBar;
     public TMP_Text mpValue;
+    public GameObject mpIncOverlay;
+    public GameObject hpIncOverlay;
     public GameObject deadOverlay;
     public TMP_Text name;
     float currentMana = 0;
@@ -25,6 +27,8 @@ public class SimpleStatusHUD : MonoBehaviour
     {
         name.text = status.charName;
     }
+
+
 
     public void SimpleSetHP(CharacterStatus status)
     {
@@ -55,15 +59,34 @@ public class SimpleStatusHUD : MonoBehaviour
         this.gameObject.SetActive(isActive);
     }
 
-    public void SetOverlay(CharacterStatus.Condition condition)
+    public void SetConditionOverlay(CharacterStatus.Condition condition)
     {
         switch (condition)
         {
             case CharacterStatus.Condition.NORMAL:
-                deadOverlay.gameObject.SetActive(false);
+                deadOverlay.SetActive(false);
                 break;
             case CharacterStatus.Condition.DEAD:
-                deadOverlay.gameObject.SetActive(true);
+                deadOverlay.SetActive(true);
+                break;
+        }
+    }
+
+    public void SetBuffOverlay(CharacterStatus.Buff buff)
+    {
+        switch (buff)
+        {
+            case CharacterStatus.Buff.NORMAL:
+                hpIncOverlay.SetActive(false);
+                mpIncOverlay.gameObject.SetActive(false);
+                break;
+            case CharacterStatus.Buff.INCMP:
+                hpIncOverlay.SetActive(false);
+                mpIncOverlay.SetActive(true);
+                break;
+            case CharacterStatus.Buff.INCHP:
+                hpIncOverlay.SetActive(true);
+                mpIncOverlay.SetActive(false); 
                 break;
         }
     }

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEngine.Rendering.DebugUI;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
 
 //defines what an item is in game
 
@@ -20,12 +22,16 @@ public class InventoryItemData : ScriptableObject
     public bool isUsable;
     public bool isUsedOverworld;
     public Action useEffect;
+    public Action nameEffect;
     public Action endEffect;
     private string toUseOn;
+    private IUsableItems item;
 
     public void AssignUse(IUsableItems usable)
     {
-        useEffect = usable.UseItem(toUseOn);
+        useEffect = usable.UseItem();
+        item = usable;
+        Debug.Log(toUseOn);
     }
 
     public void AssignEnd(IUsableItems usable)
@@ -33,11 +39,17 @@ public class InventoryItemData : ScriptableObject
         endEffect = usable.EndUse();
     }
 
-    public void UseItem(string name)
+    public void AssignName(string name)
     {
-        toUseOn = name;
+        nameEffect = item.AssignName(name);
+    }
+
+    public void UseItem()
+    {
+        //toUseOn = name;
+        //Debug.Log(name);
+        nameEffect.Invoke();
         useEffect.Invoke();
-        
     }
 
     public void EndItem()

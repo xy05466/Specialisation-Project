@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4b702213a85421478674d5d4199601c, type: 3}
   m_Name: mage
   m_EditorClassIdentifier: 
-  charName: mage
+  charName: Mage
   position:
   - 0
   - 0
@@ -28,7 +28,9 @@ MonoBehaviour:
   weakness: 2
   heal: 1
   isRecruited: 0
+  isMainPlayer: 0
   party:
   - {fileID: 11400000, guid: 47bc336c25e81cf4caf55b844196c898, type: 2}
   - {fileID: 11400000, guid: 0eaa665cf4758df4a9790ff3911e502d, type: 2}
   condition: 0
+  buff: 0

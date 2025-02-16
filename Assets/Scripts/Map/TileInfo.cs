@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
+[System.Serializable]
 public class TileInfo : IComparable
 {
     public Vector2 tilePos;
     public Vector2 mapPos;
     public Vector3 tileRot;
+    public bool discovered;
     public String tag;
+
 
     public int CompareTo(object obj)
     {

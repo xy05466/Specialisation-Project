@@ -7,6 +7,7 @@ public class PickUpItem : MonoBehaviour
 {
     public InventoryItemData itemData;
     public int amount = 1;
+    public AudioClip collectSound;
     [SerializeField] private ItemPickUpSaveData itemSaveData;
     private string id;
 
@@ -22,7 +23,7 @@ public class PickUpItem : MonoBehaviour
     {
         if (saveData.collectedItems.Contains(id))
         {
-
+            Debug.Log(this.gameObject.name);
                 Destroy(this.gameObject);
             
            
@@ -33,7 +34,7 @@ public class PickUpItem : MonoBehaviour
     {
         if (saveData.collectedItems.Contains(id))
         {
-
+            Debug.Log(this.gameObject.name);
             Destroy(this.gameObject);
 
 
@@ -52,6 +53,11 @@ public class PickUpItem : MonoBehaviour
 
     private void Start()
     {
+        if (SaveGameManager.data.activeItems.ContainsKey(id))
+        {
+            GetComponent<UniqueID>().Generate();
+            id = GetComponent<UniqueID>().ID;
+        }
         SaveGameManager.data.activeItems.Add(id, itemSaveData);
     }
 
@@ -59,19 +65,27 @@ public class PickUpItem : MonoBehaviour
     {
         var inventory = other.transform.GetComponentInChildren<InventoryHolder>();
         if (!inventory) return;
-        var usableItem = GetComponent<IUsableItems>();
-        if (usableItem != null)
+        else
         {
-            itemData.AssignUse(usableItem);
-            itemData.AssignEnd(usableItem);
+            AudioSource.PlayClipAtPoint(collectSound, transform.position);
+            //source.Play();
+                var usableItem = GetComponent<IUsableItems>();
+                if (usableItem != null)
+                {
+                    itemData.AssignUse(usableItem);
+                    itemData.AssignEnd(usableItem);
+                }
+
+                if (inventory.InventorySystem.AddToInventory(itemData, amount))
+                {
+                    SaveGameManager.data.collectedItems.Add(id);
+                    SaveGameManager.tempData.collectedItems.Add(id);
+                    Destroy(this.gameObject);
+                }
+            
+           
         }
-        
-        if (inventory.InventorySystem.AddToInventory(itemData, amount))
-        {
-            SaveGameManager.data.collectedItems.Add(id);
-            SaveGameManager.tempData.collectedItems.Add(id);
-            Destroy(this.gameObject);
-        }
+       
     }
 }
 

@@ -39,7 +39,9 @@ public class AnimationController : MonoBehaviour
     public readonly int Hurt = Animator.StringToHash("hurt");
     public readonly int Heal = Animator.StringToHash("heal");
     public readonly int Die = Animator.StringToHash("die");
-
+    public readonly int Sit = Animator.StringToHash("sit");
+    public readonly int Kick = Animator.StringToHash("kick");
+    public readonly int Victory = Animator.StringToHash("victory");
 
     private void Awake()
     {
@@ -88,11 +90,6 @@ public class AnimationController : MonoBehaviour
         StartCoroutine(PlayAuraAnim());
         yield return new WaitForSeconds(GetAnimationClip(Attack).length);
         ChangeAnimation(Combat, 0.1f, 0, 0);
-    }
-
-    public void StartPlayAuraAnim()
-    {
-
     }
 
     private IEnumerator PlayAuraAnim()

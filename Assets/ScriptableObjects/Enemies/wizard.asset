@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4b702213a85421478674d5d4199601c, type: 3}
+  m_Name: wizard
+  m_EditorClassIdentifier: 
+  charName: Wizard
+  position:
+  - 0
+  - 0
+  characterGameObject: {fileID: 8094889875040262764, guid: 2de0d02bd1617fd47812d120e3e1a6ce, type: 3}
+  level: 1
+  maxHealth: 50
+  maxMana: 40
+  health: 10
+  mana: 40
+  skills:
+  - {fileID: 11400000, guid: 42d8517d16d41394992bc501056a3ac8, type: 2}
+  - {fileID: 11400000, guid: 1e0594e55d1095a408e4b1d13cce80f8, type: 2}
+  - {fileID: 11400000, guid: 8dd7ca557b57998428e46130f3ee42ae, type: 2}
+  weakness: 2
+  heal: 1
+  isRecruited: 0
+  isMainPlayer: 0
+  party: []
+  condition: 0
+  buff: 0

@@ -6,13 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/Start.unity
+    guid: 2ee00eb37e828b34d9216a5b66647e6f
+  - enabled: 1
+    path: Assets/Scenes/OverworldDungeon.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
     path: Assets/Scenes/BattleArena.unity
     guid: 530848aeea82bb04e83d9230cbed72c9
   - enabled: 1
-    path: Assets/Scenes/BattleArena 1.unity
+    path: Assets/Scenes/TutorialBattleArena.unity
     guid: 0b9150555e0e8fd498917836a9507b0c
   - enabled: 1
     path: Assets/Scenes/SampleScene 1.unity
@@ -20,5 +23,23 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Room0.unity
     guid: 8fdb66b3d5f94c2488dec767fb72a89e
+  - enabled: 1
+    path: Assets/Scenes/End.unity
+    guid: 4f2f81b079798704da6bf1cc513e61fc
+  - enabled: 1
+    path: Assets/Scenes/BossBattleArena.unity
+    guid: 71258b6571ed83d44a12c968fa4e4b9b
+  - enabled: 1
+    path: Assets/Scenes/Room2.unity
+    guid: 10e905b194b1ab6498584a52f32789fb
+  - enabled: 1
+    path: Assets/Scenes/Room3.unity
+    guid: ec0707eb9db521943a38f57e3810da5a
+  - enabled: 1
+    path: Assets/Scenes/BossBattleArena 1.unity
+    guid: 32dfe94e076b942488dda252b90f776d
+  - enabled: 1
+    path: Assets/Scenes/Room1.unity
+    guid: 7655e0f7dd62c6641a042d44e42cfb0a
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 95ddbd3c7b3448d4f8cb0477d27dc579, type: 2}

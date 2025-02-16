@@ -15,7 +15,7 @@ public class Tile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        PostOffice.GetInstance().Subscribe(this.gameObject);
+        //PostOffice.GetInstance().Subscribe(this.gameObject);
         mapManager = FindObjectOfType<MapManager>();
     }
 
@@ -25,11 +25,11 @@ public class Tile : MonoBehaviour
         
     }
 
-    private void OnCollisionStay(Collision collision)
+    private void OnTriggerStay(Collider other)
     {
-        if (collision.gameObject.tag == "NormalPresence")
+        if (other.gameObject.tag == "NormalPresence")
         {
-            mapManager.CheckPlayerRot(collision.transform.eulerAngles.y);
+            mapManager.CheckPlayerRot(other.transform.eulerAngles.y);
             if (!isPlayerOn)
             {
                 mapManager.CheckPlayerPos(new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z));
@@ -37,15 +37,16 @@ public class Tile : MonoBehaviour
                 if (!discovered)
                 {
                     discovered = true;
+                    mapManager.SetDiscovered(new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z));
                 }
                 Debug.Log(this.name);
             }
         }
     }
 
-    private void OnCollisionExit(Collision collision)
+    private void OnTriggerExit(Collider other)
     {
-        if (collision.gameObject.tag == "Player")
+        if (other.gameObject.tag == "NormalPresence")
         {
             isPlayerOn = false;
             //Debug.Log(this.name);

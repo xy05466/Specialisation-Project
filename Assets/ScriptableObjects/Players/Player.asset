@@ -12,24 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4b702213a85421478674d5d4199601c, type: 3}
   m_Name: Player
   m_EditorClassIdentifier: 
-  charName: Player
+  charName: Eve
   position:
   - 0
   - 0
-  characterGameObject: {fileID: 5958847966647723261, guid: f6f4ea09ce860654090df1f1a9acad20, type: 3}
+  characterGameObject: {fileID: 5231772204714687921, guid: 78cff06243830d64e8026a8b6954bf31, type: 3}
   level: 1
-  maxHealth: 200
+  maxHealth: 150
   maxMana: 50
-  health: 0
+  health: 150
   mana: 50
   skills:
   - {fileID: 11400000, guid: 046cd13a87b6b9649acc2c5592741efc, type: 2}
   - {fileID: 11400000, guid: 7d37bbfca0cacb4429d0d823e73b38ff, type: 2}
-  weakness: 0
+  weakness: 2
   heal: 1
   isRecruited: 1
   isMainPlayer: 1
   party:
   - {fileID: 11400000}
   - {fileID: 11400000, guid: d0d8fa48d0f51eb49a92aa81a1f4b22a, type: 2}
-  condition: 1
+  - {fileID: 11400000, guid: 24ffc2c0f47df9f4ab6d518e2f03aa87, type: 2}
+  condition: 0
+  buff: 0

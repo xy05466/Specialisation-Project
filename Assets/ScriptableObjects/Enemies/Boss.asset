@@ -12,20 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4b702213a85421478674d5d4199601c, type: 3}
   m_Name: Boss
   m_EditorClassIdentifier: 
-  charName: boss
+  charName: Uriel
   position:
   - 0
   - 0
   characterGameObject: {fileID: 0}
   level: 1
-  maxHealth: 100
-  maxMana: 40
-  health: 100
-  mana: 40
+  maxHealth: 300
+  maxMana: 50
+  health: 300
+  mana: 50
   skills:
-  - {fileID: 11400000, guid: 15b5365629876ed4594610cab902260b, type: 2}
-  - {fileID: 11400000, guid: 38e3b4a776aab1e4fa5decc2a86c4400, type: 2}
+  - {fileID: 11400000, guid: 42d8517d16d41394992bc501056a3ac8, type: 2}
+  - {fileID: 11400000, guid: 8dd7ca557b57998428e46130f3ee42ae, type: 2}
+  - {fileID: 11400000, guid: 1e0594e55d1095a408e4b1d13cce80f8, type: 2}
   weakness: 1
   heal: 0
   isRecruited: 0
+  isMainPlayer: 0
+  party: []
   condition: 0
+  buff: 0

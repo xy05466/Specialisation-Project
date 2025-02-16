@@ -6,34 +6,34 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
+using Eflatun.SceneReference;
 public class SceneManagement : MonoBehaviour
 {
     private static SceneManagement instance = null;
+    public Animator transition;
+    public CanvasGroup canvasGroup;
+    private List<string> sceneHistory = new List<string>();
+
     public static SceneManagement Instance { get {
             if (instance == null)
             {
-                GameObject newGO = Instantiate(Resources.Load("Prefabs/SceneManager") as GameObject, null);
+                GameObject newGO = Instantiate(Resources.Load("SceneManager") as GameObject, null);
                 newGO.name = "SceneManager";
                 newGO.SetActive(true);
                 DontDestroyOnLoad(newGO);
             }
             return instance;
         } }
-    [Header("Scene Data")]
-    public List<string> sceneNames;
 
     private AsyncOperation asyncHandler = null;
     private Coroutine loadCoroutine = null;
-
-    [Header("Canvas")]
-    public TMPro.TMP_Text loadingText;
     
     public bool isLoading { get; private set; }
     public bool isLoadingEffect { get; private set; }
 
     private System.Action onSceneLoaded;
 
-    public Volume dissolveVolume;
+    //public Volume dissolveVolume;
 
     public void OnSceneLoaded(System.Action onSceneLoad)
     {
@@ -50,16 +50,18 @@ public class SceneManagement : MonoBehaviour
         }   
         DontDestroyOnLoad(this);
         instance = this;
+        //transition.enabled = false;
+        //canvasGroup.alpha = 0.0f;
         //loadingText.gameObject.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            LoadScene(SceneManager.GetActiveScene().name);
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.P))
+    //    {
+    //        LoadScene(SceneManager.GetActiveScene().name);
+    //    }
+    //}
 
     public void LoadScene(string name)
     {
@@ -69,24 +71,13 @@ public class SceneManagement : MonoBehaviour
 
     private IEnumerator LoadSceneRoutine(string sceneName)
     {
+        sceneHistory.Add(sceneName);
+        transition.SetBool("Start", true);
         isLoading = true;
         isLoadingEffect = true;
         Time.timeScale = 0;
-        //Doing Scene Transitions
-        if (dissolveVolume != null)
-        {
-            float timePassed = 0f;
-            while (timePassed < 1f)
-            {
-                timePassed += Time.unscaledDeltaTime;
-                dissolveVolume.weight = Mathf.Min(timePassed, 1f);
-                yield return null;
-            }
-        }
 
         asyncHandler = SceneManager.LoadSceneAsync(sceneName);
-        //loadingText.text = "Loading... 0%";
-        //loadingText.gameObject.SetActive(true);
 
         if (asyncHandler == null)
             yield break;
@@ -94,33 +85,34 @@ public class SceneManagement : MonoBehaviour
         //When the async progress is not done
         while (!asyncHandler.isDone)
         {
-            //Debug.Log(string.Format("Load Scene {0}  Progress: {1:P2}", sceneName, asyncHandler.progress));
-            //loadingText.text = string.Format("Loading... {0:P2}", asyncHandler.progress);
+            Debug.Log(string.Format("Load Scene {0}  Progress: {1:P2}", sceneName, asyncHandler.progress));
             yield return null;
         }
         asyncHandler = null;
         onSceneLoaded?.Invoke();
         onSceneLoaded = null;
-        //loadingText.gameObject.SetActive(false);
         isLoading = false;
         loadCoroutine = null;
-
-        //Doing Scene Transitions : ON GAME TIME
-        if (dissolveVolume != null)
-        {
-            float timePassed = 0f;
-            while (timePassed < 1f)
-            {
-                timePassed += Time.deltaTime;
-                dissolveVolume.weight = 1f - Mathf.Min(timePassed, 1f);
-                yield return null;
-            }
-        }
 
         //Default set game time scale to 1 when a new scene is loaded
         Time.timeScale = 1;
         isLoadingEffect = false;
+        transition.SetBool("Start", false);
     }
+
+    public string GetPreviousScene()
+    {
+        if (sceneHistory.Count >= 2)  //Checking that we have actually switched scenes enough to go back to a previous scene
+        {
+            sceneHistory.RemoveAt(sceneHistory.Count - 1);
+            return sceneHistory[sceneHistory.Count - 1].ToString();
+        }
+        else
+        {
+            return "";
+        }
+    }
+
 
     public void Exit()
     {

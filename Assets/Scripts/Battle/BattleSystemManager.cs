@@ -7,12 +7,23 @@ using UnityEngine.TextCore.Text;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.Events;
+using Eflatun.SceneReference;
+using static CharacterStatus;
 
 public class BattleSystemManager : MonoBehaviour
 {
     [SerializeField] private Encounters encounters;
+    [SerializeField] private SceneReference winScene;
+    [SerializeField] private SceneReference loseScene;
 
-    public enum BattleState { START, PLAYERTURN, ENEMYTURN, WIN, LOST }
+    public GameObject commandPanel;
+    public GameObject victory;
+    public GameObject defeat;
+    public GameObject playerTurn;
+    public GameObject enemyTurn;
+    public GameObject escapeSuccess;
+    public GameObject escapeFail;
+    public enum BattleState { START, PLAYERTURN, ENEMYTURN, WIN, LOST,ESCAPE }
     private List<UnitStatus> enemyStatuses;
     //private List<GameObject> players;
     private List<UnitStatus> playerStatuses;
@@ -43,9 +54,11 @@ public class BattleSystemManager : MonoBehaviour
 
     public GameObject content;
     public GameObject arrow;
+    public Button escape;
     //private GameObject enemyHUD;
     
     private BattleState battleState;
+    private IEnumerator enemyCoroutine;
 
     private bool hasClicked = true;
     private bool canSelect = false;
@@ -72,13 +85,18 @@ public class BattleSystemManager : MonoBehaviour
     private int partyIndex;
     private EnemyAI.Action action;
 
-    public static UnityAction<UnitStatus> OnHealthChanged;
-    public static UnityAction<float> OnManaChanged;
+    private SaveGameManager saveGameManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(this.gameObject.name +this.gameObject.GetInstanceID() + " start");
+        saveGameManager = GameObject.FindWithTag("SaveGame").GetComponent<SaveGameManager>();
         battleState = BattleState.START;
+        if (encounters.isBoss)
+        {
+            escape.interactable = false;
+        }
         StartCoroutine(BeginBattle());
     }
 
@@ -151,6 +169,9 @@ public class BattleSystemManager : MonoBehaviour
                 if (playerStatuses[a].condition == CharacterStatus.Condition.DEAD)
                 {
                     playerStatuses[a].animCon.ChangeAnimation(playerStatuses[a].animCon.Die, 0f, 0, 0);
+                    playerStatusHUDList[a].SetDeadStatus(true);
+                    currPlayerMana -= playerStatuses[a].mana;
+                    partyLeft--;
                 }
                 else
                 {
@@ -160,6 +181,7 @@ public class BattleSystemManager : MonoBehaviour
                         hasSetIndex = true;
                     }
                 }
+                playerStatusHUDList[a].SetBuffStatus(playerStatuses[a].buff);
                 a++;
             
         }
@@ -180,28 +202,37 @@ public class BattleSystemManager : MonoBehaviour
     private void setPlayerSkills(bool isPlayerTurn)
     {
         int n = 0;
-        int j = 0;
         if (isPlayerTurn)
         {
-            foreach (UnitStatus status in playerStatuses)
+            partyIndex = (partyIndex + 1) % playerStatuses.Count;
+            while (playerStatuses[partyIndex].condition == CharacterStatus.Condition.DEAD)
             {
-                j++;
-                if (status.condition != CharacterStatus.Condition.DEAD && status.name != playerStatuses[partyIndex].name)
-                {
-                    partyIndex = playerStatuses.IndexOf(status);
-                    break;
-                }
+                partyIndex = (partyIndex + 1) % playerStatuses.Count;
             }
+            //foreach (UnitStatus status in playerStatuses)
+            //{
+            //    j++;
+            //    if (status.condition != CharacterStatus.Condition.DEAD && status.charName != playerStatuses[partyIndex].charName)
+            //    {
+            //        partyIndex = playerStatuses.IndexOf(status);
+            //        break;
+            //    }
+            //}
         }
         else
         {
-            for (int a = playerStatuses.Count - 1; a >= 0; a--)
+            partyIndex = (partyIndex) % playerStatuses.Count;
+            while (playerStatuses[partyIndex].condition == CharacterStatus.Condition.DEAD)
             {
-                if (playerStatuses[a].condition != CharacterStatus.Condition.DEAD)
-                {
-                    partyIndex = a;
-                }
+                partyIndex = (partyIndex + 1) % playerStatuses.Count;
             }
+            //for (int a = playerStatuses.Count - 1; a >= 0; a--)
+            //{
+            //    if (playerStatuses[a].condition != CharacterStatus.Condition.DEAD)
+            //    {
+            //        partyIndex = a;
+            //    }
+            //}
         }
 
         foreach (Skill skill in playerStatuses[partyIndex].skills)
@@ -230,10 +261,12 @@ public class BattleSystemManager : MonoBehaviour
 
     IEnumerator PlayerTurn()
     {
+        playerTurn.SetActive(true);
         yield return new WaitForSeconds(1);
-
+        playerTurn.SetActive(false);
         // release the blockade on clicking 
         // so that player can click on 'attack' button    
+        commandPanel.SetActive(true);
         hasClicked = false;
     }
 
@@ -264,8 +297,7 @@ public class BattleSystemManager : MonoBehaviour
             
             if (Input.GetKeyDown(KeyCode.U))
             {
-
-                index = playerStatuses.Count - 1;
+                index = playerStatuses.FindLastIndex(x => x.condition != CharacterStatus.Condition.DEAD);
                 partyToAttack = playerStatuses;
                 arrow.gameObject.transform.position = new Vector3(playerStatuses[index].transform.position.x, playerStatuses[index].transform.position.y + 5f, playerStatuses[index].transform.position.z);
 
@@ -275,17 +307,20 @@ public class BattleSystemManager : MonoBehaviour
             }
             if (Input.GetKeyDown(KeyCode.O))
             {
-
-                index = enemyStatuses.Count - 1;
+                index = enemyStatuses.FindLastIndex(x => x.condition != CharacterStatus.Condition.DEAD);
                 partyToAttack = enemyStatuses;
                 arrow.gameObject.transform.position = new Vector3(enemyStatuses[index].transform.position.x, enemyStatuses[index].transform.position.y + 5f, enemyStatuses[index].transform.position.z);
                 hudToChangeList = enemyStatusHUDList;
                 //Debug.Log(enemyToAttack.name);
                 
             }
-            if (Input.GetKeyDown(KeyCode.J) && index >0)
+            if (Input.GetKeyDown(KeyCode.J) && index >-1)
             {
                 index--;
+                if (index < 0)
+                {
+                    index = 0;
+                }
                 if (partyToAttack[index].condition == CharacterStatus.Condition.DEAD)
                 {
                     if (partyToAttack.Count > 2)
@@ -297,13 +332,18 @@ public class BattleSystemManager : MonoBehaviour
                         index++;
                     }
                 }
+                Debug.Log("index: " + index);
                 enemyToAttack = partyToAttack[index];
                 arrow.gameObject.transform.position = new Vector3(enemyToAttack.transform.position.x, enemyToAttack.transform.position.y + 5f, enemyToAttack.transform.position.z);
-                Debug.Log(enemyToAttack.name);
+                Debug.Log(enemyToAttack.charName);
             }
-            if (Input.GetKeyDown(KeyCode.L) && (index + 1) <= encounterLeft - 1)
+            if (Input.GetKeyDown(KeyCode.L) && (index + 1) <= partyToAttack.Count - 1)
             {
                 index++;
+                if (index > partyToAttack.Count - 1)
+                {
+                    index = partyToAttack.Count - 1;
+                }
                 if (partyToAttack[index].condition == CharacterStatus.Condition.DEAD)
                 {
                     if (partyToAttack.Count > 2)
@@ -315,17 +355,18 @@ public class BattleSystemManager : MonoBehaviour
                         index--;
                     }
                 }
+                Debug.Log("index: " + index);
                 enemyToAttack = partyToAttack[index];
                 arrow.gameObject.transform.position = new Vector3(enemyToAttack.transform.position.x, enemyToAttack.transform.position.y + 5f, enemyToAttack.transform.position.z);
-                Debug.Log(enemyToAttack.name);
+                Debug.Log(enemyToAttack.charName);
             }
             if (Input.GetKeyDown(KeyCode.K))
             {
                 enemyToAttack = partyToAttack[index];
-                Debug.Log("attack" + enemyToAttack.name);
+                Debug.Log("attack" + enemyToAttack.charName);
                 OnAttackButtonPress();
-                hudToChangeList = enemyStatusHUDList;
-                partyToAttack = enemyStatuses;
+                //hudToChangeList = enemyStatusHUDList;
+                //partyToAttack = enemyStatuses;
             }
         }
        
@@ -401,7 +442,6 @@ public class BattleSystemManager : MonoBehaviour
         {
             mpDebt = Mathf.FloorToInt((Mathf.Abs(hud.GetMP() - skillMpCost) * 1.5f));
             inDebt = true;
-            //skillMpCost += mpDebt;
         }
         else
         {
@@ -416,8 +456,7 @@ public class BattleSystemManager : MonoBehaviour
         // trigger the execution of attack animation
         // in 'BattlePresence' animator
         skillImage.SetActive(true);
-        skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.name;
-
+        skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.skillName;
 
         CheckMpCost(playerMPHUD, target);
         StartCoroutine(playerMPHUD.SetMP((skillMpCost), false));
@@ -426,48 +465,53 @@ public class BattleSystemManager : MonoBehaviour
         yield return StartCoroutine(target.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
         CheckSkillDmg(hudToChangeList[index], target);
 
-       
-
         skillImage.SetActive(false);
 
-        for (int i = 0; i < enemyStatuses.Count; i++)
+        UnitStatus deadEnemy = enemyStatuses.FindLast(x => x.health <= 0 && x.condition != CharacterStatus.Condition.DEAD);
+        int deadEnemyIndex = enemyStatuses.FindLastIndex(x => x.health <= 0 && x.condition != CharacterStatus.Condition.DEAD);
+        if (deadEnemy != null)
         {
-            if (enemyStatuses[i].health <= 0)
+            deadEnemy.animCon.ChangeAnimation(deadEnemy.animCon.Die, 0.1f, 0, 0);
+            deadEnemy.condition = CharacterStatus.Condition.DEAD;
+            encounterLeft--;
+            setPlayerSkills(false);
+            enemyStatusHUDList[deadEnemyIndex].SetDeadStatus(true);
+            
+            if (encounterLeft == 0)
             {
-                enemyStatuses[i].animCon.ChangeAnimation(enemyStatuses[i].animCon.Die, 0.1f, 0, 0);
-                enemyStatuses[i].condition = CharacterStatus.Condition.DEAD;
-                encounterLeft--;
-                enemyStatuses.Remove(enemyStatuses[i]);
+                battleState = BattleState.WIN;
+                yield return StartCoroutine(EndBattle());
+            }
+        }
 
-                //index = 0;
-                if (encounterLeft == 0)
-                {
-                    battleState = BattleState.WIN;
-                    yield return StartCoroutine(EndBattle());
-                }
-            }
-        }
-        int n = -1;
-        foreach (UnitStatus status in enemyStatuses)
+        UnitStatus deadPlayer = playerStatuses.FindLast(x => x.health <= 0 && x.condition != CharacterStatus.Condition.DEAD);
+        int deadPlayerIndex = playerStatuses.FindLastIndex(x => x.health <= 0 && x.condition != CharacterStatus.Condition.DEAD);
+        if (deadPlayer != null)
         {
-            if (status.condition != CharacterStatus.Condition.DEAD)
+            deadPlayer.animCon.ChangeAnimation(deadPlayer.animCon.Die, 0.1f, 0, 0);
+            deadPlayer.condition = CharacterStatus.Condition.DEAD;
+            partyLeft--;
+           
+            playerStatusHUDList[deadPlayerIndex].SetDeadStatus(true);
+            if (partyLeft == 0)
             {
-                arrow.transform.position = new Vector3(status.transform.position.x, status.transform.position.y + 5f, status.transform.position.z);
+                battleState = BattleState.LOST;
+                yield return StartCoroutine(EndBattle());
             }
-            n++;
         }
-        index = n;
+
+        index = enemyStatuses.FindLastIndex(x => x.condition != CharacterStatus.Condition.DEAD);
+        Vector3 newArrowPos = enemyStatuses.FindLast(x => x.condition != CharacterStatus.Condition.DEAD).transform.position;
+        arrow.transform.position = new Vector3(newArrowPos.x, newArrowPos.y + 5f, newArrowPos.z) ;
+        partyToAttack = null;
+        hudToChangeList = null;
+
+        Debug.Log("index: " + index);
         if (inDebt || (playerMPHUD.GetMP() <= 0 && !inDebt))
         {
             // if the enemy health is still
             // above 0 when the turn finishes
             // it's enemy's turn!   
-            //yield return StartCoroutine(playerMPHUD.SetMP(Mathf.Abs(maxPlayerMana - playerMPHUD.GetMP()) - mpDebt, true));
-            //inDebt = false;
-            //mpDebt = 0;
-            //setPlayerSkills(false);
-            //battleState = BattleState.ENEMYTURN;
-            //yield return StartCoroutine(EnemyTurn());
             StartEndTurn(true);
         }
 
@@ -488,20 +532,39 @@ public class BattleSystemManager : MonoBehaviour
 
     private IEnumerator EndTurn(bool isPlayerTurn)
     {
+        int deadMP = 0;
         if (isPlayerTurn)
         {
-            yield return StartCoroutine(playerMPHUD.SetMP(Mathf.Abs(maxPlayerMana - playerMPHUD.GetMP()) - mpDebt, true));
+            commandPanel.SetActive(false);
+            List<UnitStatus> deadPlayers = playerStatuses.FindAll(x => x.condition == CharacterStatus.Condition.DEAD);
+            foreach (UnitStatus player in deadPlayers)
+            {
+                deadMP += (int)player.maxMana;
+            }
+            yield return StartCoroutine(playerMPHUD.SetMP(Mathf.Abs(maxPlayerMana - playerMPHUD.GetMP()) - mpDebt - deadMP, true));
             inDebt = false;
             mpDebt = 0;
+            partyIndex = 0;
             setPlayerSkills(false);
             battleState = BattleState.ENEMYTURN;
-            yield return StartCoroutine(EnemyTurn());
+            enemyTurn.SetActive(true);
+            yield return new WaitForSeconds(1);
+            enemyTurn.SetActive(false) ;
+            enemyCoroutine = EnemyTurn();
+            yield return StartCoroutine(enemyCoroutine);
         }
         else
         {
-            yield return StartCoroutine(enemyMPHUD.SetMP(Mathf.Abs(maxEnemyMana - enemyMPHUD.GetMP()) - mpDebt, true));
+            
+            List<UnitStatus> deadEnemies = enemyStatuses.FindAll(x => x.condition == CharacterStatus.Condition.DEAD);
+            foreach (UnitStatus enemy in deadEnemies)
+            {
+                deadMP += (int)enemy.maxMana;
+            }
+            yield return StartCoroutine(enemyMPHUD.SetMP(Mathf.Abs(maxEnemyMana - enemyMPHUD.GetMP()) - mpDebt - deadMP, true));
             inDebt = false;
             mpDebt = 0;
+            setPlayerSkills(false);
             //yield return new WaitForSeconds(1);
             battleState = BattleState.PLAYERTURN;
             yield return StartCoroutine(PlayerTurn());
@@ -523,31 +586,74 @@ public class BattleSystemManager : MonoBehaviour
         }
     }
 
+    private void ResetBuffs()
+    {
+        foreach (UnitStatus playerStatus in playerStatuses)
+        {
+            if (playerStatus.buff == CharacterStatus.Buff.INCHP)
+            {
+                playerStatus.characterStatus.health  = playerStatus.health / 1.5f;
+                playerStatus.characterStatus.maxHealth = playerStatus.maxHealth / 1.5f;
+                playerStatus.buff = CharacterStatus.Buff.NORMAL;
+            }
+            else if (playerStatus.buff == CharacterStatus.Buff.INCMP)
+            {
+                playerStatus.characterStatus.health = playerStatus.mana / 1.5f;
+                playerStatus.characterStatus.maxHealth = playerStatus.maxMana / 1.5f;
+                playerStatus.buff = CharacterStatus.Buff.NORMAL;
+            }
+            
+        }
+    }
+
     IEnumerator TryEscape()
     {
-        escapeChance = Random.Range(0, 10);
-        Debug.Log("escaped");
-        SavePlayerStatus();
+        //escapeChance = Random.Range(0, 10);
+        //Debug.Log("escaped");
+        //ResetBuffs();
+        //battleState = BattleState.ESCAPE;
+        //SavePlayerStatus();
+        //escapeSuccess.SetActive(true);
+        //yield return new WaitForSeconds(1.5f);
+        //escapeSuccess.SetActive(false);
+        //player.transform.GetChild(0).gameObject.SetActive(true);
+        //player.transform.GetChild(1).gameObject.SetActive(false);
+        //Vector3 spawnPos = SaveGameManager.StringToVector3(PlayerPrefs.GetString("LastPos"));
+        //saveGameManager.StartLoadScene(spawnPos, winScene.Name);
+        //Debug.Log("escaped");
+        //SavePlayerStatus();
         yield return new WaitForSeconds(1);
-        SceneLoader.instance.LoadLevel("SampleScene");
-        //if (escapeChance < 7 + (escapeCount))
-        //{
-        //    Debug.Log("escaped");
-        //    yield return new WaitForSeconds(1);
-        //    SceneLoader.instance.LoadLevel("SampleScene");
-        //}
-        //else
-        //{
-        //    Debug.Log("failed escape");
-        //    battleState = BattleState.ENEMYTURN;
-        //    yield return StartCoroutine(EnemyTurn());
-        //    escapeCount++;
-        //}
+        player.transform.GetChild(0).gameObject.SetActive(true);
+        player.transform.GetChild(1).gameObject.SetActive(false);
+        SceneLoader.instance.LoadLevel(winScene.Name);
+        if (escapeChance < 7 + (escapeCount))
+        {
+            Debug.Log("escaped");
+            ResetBuffs();
+            battleState = BattleState.ESCAPE;
+            SavePlayerStatus();
+            escapeSuccess.SetActive(true);
+            yield return new WaitForSeconds(1.5f);
+            escapeSuccess.SetActive(false);
+            player.transform.GetChild(0).gameObject.SetActive(true);
+            player.transform.GetChild(1).gameObject.SetActive(false);
+            Vector3 spawnPos = SaveGameManager.StringToVector3(PlayerPrefs.GetString("LastPos"));
+            saveGameManager.StartLoadScene(spawnPos, winScene.Name);
+        }
+        else
+        {
+            Debug.Log("failed escape");
+            battleState = BattleState.ENEMYTURN;
+            escapeFail.SetActive(true);
+            yield return new WaitForSeconds(1.5f);
+            escapeFail.SetActive(false);
+            yield return StartCoroutine(EnemyTurn());
+            escapeCount++;
+        }
     }
 
     IEnumerator EnemyTurn()
     {
-        int i = 0;
         UnitStatus unitTarget;
         while (!inDebt)
         {
@@ -578,14 +684,13 @@ public class BattleSystemManager : MonoBehaviour
                     SetSkillToUse(enemy.GetComponent<UnitStatus>().skills[skill]);
                     CheckMpCost(enemyMPHUD, unitTarget);
                     skillImage.SetActive(true);
-                    skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.name;
+                    skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.skillName;
 
                     StartCoroutine(enemyMPHUD.SetMP(skillMpCost, false));
                     StartCoroutine(enemy.GetComponent<UnitStatus>().animCon.AttackAnimation(skillToUse, unitTarget.transform.position));
                     
-                    yield return StartCoroutine(unitTarget.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration / 2));
+                    yield return StartCoroutine(unitTarget.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
                     CheckSkillDmg(playerStatusHUDList[target], unitTarget);
-                    OnHealthChanged?.Invoke(unitTarget);
                     skillImage.SetActive(false);
                 }
                 else
@@ -601,42 +706,29 @@ public class BattleSystemManager : MonoBehaviour
                     }
                     CheckMpCost(enemyMPHUD, unitTarget);
                     skillImage.SetActive(true);
-                    skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.name;
+                    skillImage.gameObject.transform.GetChild(0).GetComponent<TMP_Text>().text = skillToUse.skillName;
                     StartCoroutine(enemyMPHUD.SetMP(skillMpCost, false));
                     StartCoroutine(enemy.GetComponent<UnitStatus>().animCon.AttackAnimation(skillToUse, unitTarget.transform.position));
-                    CheckSkillDmg(enemyStatusHUDList[target], unitTarget);
                     
                     yield return StartCoroutine(unitTarget.animCon.ReactAnimation(skillToUse.effect.GetComponent<ParticleSystem>().main.duration));
-                    
+                    CheckSkillDmg(enemyStatusHUDList[target], unitTarget);
                     skillImage.SetActive(false);
                 }
-               
-                foreach (UnitStatus status in playerStatuses)
+                UnitStatus deadPlayer = playerStatuses.FindLast(x => x.health <= 0 && x.condition != CharacterStatus.Condition.DEAD);
+                int deadPlayerIndex = playerStatuses.FindLastIndex(x => x.health <= 0 && x.condition != CharacterStatus.Condition.DEAD);
+                if (deadPlayer != null)
                 {
-                    if (status.health <= 0 && status.condition != CharacterStatus.Condition.DEAD)
+                    deadPlayer.animCon.ChangeAnimation(deadPlayer.animCon.Die, 0.1f, 0, 0);
+                    deadPlayer.condition = CharacterStatus.Condition.DEAD;
+                    partyLeft--;
+                    playerStatusHUDList[deadPlayerIndex].SetDeadStatus(true);
+                    if (partyLeft == 0)
                     {
-                        status.animCon.ChangeAnimation(status.animCon.Die, 0.1f, 0, 0);
-                        status.condition = CharacterStatus.Condition.DEAD;
-                        partyLeft--;
-                        for (int a = playerStatuses.Count - 1; a >= 0; a--)
-                        {
-                            if (playerStatuses[a].condition != CharacterStatus.Condition.DEAD)
-                            {
-                                partyIndex = a;
-                            }
-                        }
-                        setPlayerSkills(false);
-                        if (partyLeft == 0)
-                        {
-                            battleState = BattleState.LOST;
-                            yield return StartCoroutine(EndBattle());
-                        }
+                        battleState = BattleState.LOST;
+                        StopCoroutine(enemyCoroutine);
+                        yield return StartCoroutine(EndBattle());
+
                     }
-                }
-                i++;
-                if (i > encounterLeft - 1)
-                {
-                    i = 0;
                 }
                 if (inDebt || (enemyMPHUD.GetMP() <= 0 && !inDebt))
                 {
@@ -649,12 +741,7 @@ public class BattleSystemManager : MonoBehaviour
             }
         }
         StartEndTurn(false);
-        //yield return StartCoroutine(enemyMPHUD.SetMP(Mathf.Abs(maxEnemyMana - enemyMPHUD.GetMP()) - mpDebt, true));
-        //inDebt = false;
-        //mpDebt = 0;
-        ////yield return new WaitForSeconds(1);
-        //battleState = BattleState.PLAYERTURN;
-        //yield return StartCoroutine(PlayerTurn());
+
         // if the player health is still
         // above 0 when the turn finishes
         // it's our turn again!
@@ -678,30 +765,44 @@ public class BattleSystemManager : MonoBehaviour
             // of message or play a victory fanfare
             // here
             SavePlayerStatus();
+            playerTurn.SetActive(false);
+            victory.SetActive(true);
             yield return new WaitForSeconds(1);
-
-            SceneLoader.instance.LoadLevel("SampleScene");
+            Vector3 spawnPos = SaveGameManager.StringToVector3(PlayerPrefs.GetString("LastPos"));
+            saveGameManager.StartLoadScene(spawnPos, winScene.Name);
         }
         // otherwise check if we lost
         // You probably want to display some kind of
         // 'Game Over' screen to communicate to the 
         // player that the game is lost
-        else if (battleState == BattleState.LOST)
+        if (battleState == BattleState.LOST)
         {
             // you may wish to display some kind
             // of message or play a sad tune here!
-            SavePlayerStatus();
+            //playerTurn.SetActive(false);
+            //enemyTurn.SetActive(false);
+            defeat.SetActive(true);
             yield return new WaitForSeconds(1);
-            SceneLoader.instance.LoadLevel("SampleScene");
+            Vector3 spawnPos = SaveGameManager.StringToVector3(PlayerPrefs.GetString("LastPos"));
+            SceneManagement.Instance.LoadScene(loseScene.Name);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1);
         }
     }
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        SelectTarget();
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (battleState == BattleState.PLAYERTURN)
         {
-            SceneLoader.instance.LoadLevel("SampleScene");
+            SelectTarget();
         }
+
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    Vector3 spawnPos = SaveGameManager.StringToVector3(PlayerPrefs.GetString("LastPos"));
+        //    saveGameManager.StartLoadScene(spawnPos, winScene.Name);
+        //}
     }
 }

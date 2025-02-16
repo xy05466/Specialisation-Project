@@ -8,37 +8,53 @@ using UnityEngine.SceneManagement;
 public class EncounterManager : MonoBehaviour
 {
     //public static StatusManager Instance = null;
+    public bool enableEncounters = true;
     [SerializeField] private CharacterStatus playerStatus;
     public HUDManager statusHUD;
     public SaveGameManager saveGameManager;
     private CharacterStatus enemyStatus;
     public PlayerMovementController playerMovementController;
+    public GameObject bossTalk;
+    public GameObject boss1BattleDialogue;
+    public UnitStatus status;
+    public AudioClip collectSound;
     private ItemEffects itemEffects;
 
     private bool isAttacked;
     Vector3 targetPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
+    private float encounterChance = 0.15f;
+    private float encounterThreshold = 100f;
+    private float baseChance = 0.001f;
+    private float distanceMoved = 0f;
+    private Vector3 lastPos;
     private int encounternum = 1;
     private int keynum;
     private bool inEncounter;
+    private bool isTalking;
 
     void OnEnable()
     {
         Debug.Log("OnEnable called");
         SceneManager.sceneLoaded += OnSceneLoaded;
+        Debug.Log(transform.position);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name.Contains("SampleScene"))
+        saveGameManager = GameObject.FindWithTag("SaveGame").GetComponent<SaveGameManager>();
+        if (scene.name.Contains("Overworld") || scene.name.Contains("Room"))
         {
-            if (PlayerPrefs.GetString("EncounterPos") != "")
+            if (PlayerPrefs.GetString("LastPos") != "")
             {
-                transform.position = StringToVector3(PlayerPrefs.GetString("EncounterPos"));
+                status.Init();
+                if (SceneManagement.Instance.GetPreviousScene().Contains("BattleArena"))
+                {
+                    transform.parent.position = StringToVector3(PlayerPrefs.GetString("LastPos"));
+                }
             }
             saveGameManager.TryTempLoadData();
         }
-        Debug.Log("OnSceneLoaded: " + scene.name);
     }
 
     void OnDisable()
@@ -53,37 +69,42 @@ public class EncounterManager : MonoBehaviour
         enemyStatus = new CharacterStatus();
         keynum = PlayerPrefs.GetInt("keynum", 0);
         itemEffects = GetComponent<ItemEffects>();
-
+       
         //statusHUD.SimpleSetHP(status);
        
     }
 
-
-
     private void Update()
     {
-        if (playerMovementController.GetIsMoving())
+        if (playerMovementController.GetIsMoving() && !boss1BattleDialogue.activeSelf)
         {
-            float distanceToTarget = Vector3.Distance(targetPosition, transform.position);
-            float rand = Random.Range(1, 101);
-            if (rand < distanceToTarget * 0.1f && !inEncounter)
+            float distanceToTarget = Vector3.Distance(targetPosition, transform.parent.position);
+            float rand = Random.Range(0, 256);
+            if (rand < distanceToTarget * encounterChance && !inEncounter && enableEncounters)
             {
-                if (SceneManager.GetActiveScene().name == "SampleScene")
+                if (SceneManager.GetActiveScene().name.Contains("Overworld") || SceneManager.GetActiveScene().name.Contains("Room"))
                 {
                     inEncounter = true;
                     saveGameManager.TempSaveData();
                     Debug.Log("encounter" + encounternum);
                     PlayerPrefs.SetString("SceneName", SceneManager.GetActiveScene().name);
-                    PlayerPrefs.SetString("EncounterPos", this.transform.localPosition.ToString());
+                    PlayerPrefs.SetString("LastPos", transform.parent.position.ToString());
                     encounternum++;
-                    targetPosition = transform.position;
-                    SceneLoader.instance.LoadLevel("BattleArena");
+                    targetPosition = transform.parent.position;
+                    if (PlayerPrefs.GetInt("didtutorial", 0) == 0)
+                    {
+                        SceneManagement.Instance.LoadScene("TutorialBattleArena");
+                    }
+                    else
+                    {
+                        SceneManagement.Instance.LoadScene("BattleArena");
+                    }
                 }
             }
         }
         else
         {
-            targetPosition = transform.position;
+            targetPosition = transform.parent.position;
         }
     }
 
@@ -109,31 +130,39 @@ public class EncounterManager : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if (other.tag == "Key" && Input.GetKeyDown(KeyCode.E))
+        if (other.tag == "Key")
         {
-            PlayerPrefs.SetInt("keynum", PlayerPrefs.GetInt("keynum", 0) + 1);
-            keynum = PlayerPrefs.GetInt("keynum", 0);
+            AudioSource.PlayClipAtPoint(collectSound, transform.position);
             Destroy(other.gameObject);
-            Debug.Log(keynum);
+            
+            
         }
-        if (this.playerStatus.health > 0)
+
+        if (other.tag == "Boss" && !isTalking)
         {
-            if (other.tag == "Boss" && Input.GetKeyDown(KeyCode.E))
+            bossTalk.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.E))
             {
-
-                    //isAttacked = true;
-                    //setBattleData(other);
-                if (SceneManager.GetActiveScene().name == "SampleScene")
-                {
-
-                    SceneLoader.instance.LoadLevel("BattleArena");
-                }
+                //bossTalk.SetActive(false);
+                boss1BattleDialogue.SetActive(true);
+                isTalking = true;
+            }
+               
                     
                    
                     
                 
-            }
+            
         }
+        
+    }
+
+    public void StartBossBattle()
+    {
+        PlayerPrefs.SetString("SceneName", SceneManager.GetActiveScene().name);
+        PlayerPrefs.SetString("LastPos", transform.parent.position.ToString());
+        saveGameManager.TempSaveData();
+        SceneManagement.Instance.LoadScene("BossBattleArena 1");
     }
     
     public bool SetPartyHealth()
@@ -155,6 +184,14 @@ public class EncounterManager : MonoBehaviour
         return true;
     }
 
+    public void SetPartyBuffs()
+    {
+        foreach (CharacterStatus status in this.playerStatus.party)
+        {
+            statusHUD.UpdateBuffOverlay(status);
+        }
+    }
+
     public bool SetPartyCondition()
     {
         if (this.playerStatus.condition == CharacterStatus.Condition.NORMAL &&
@@ -164,7 +201,7 @@ public class EncounterManager : MonoBehaviour
         }
         this.playerStatus.health = this.playerStatus.maxHealth;
         this.playerStatus.condition = CharacterStatus.Condition.NORMAL;
-        statusHUD.UpdateOverlay(this.playerStatus);
+        statusHUD.UpdateConditionOverlay(this.playerStatus);
         statusHUD.SimpleUpdateHP(this.playerStatus);
 
         foreach (CharacterStatus status in this.playerStatus.party)
@@ -172,7 +209,9 @@ public class EncounterManager : MonoBehaviour
             if (status.condition == CharacterStatus.Condition.DEAD)
             {
                 status.condition = CharacterStatus.Condition.NORMAL;
-                statusHUD.UpdateOverlay(status);
+                status.health = status.maxHealth;
+                statusHUD.SimpleUpdateHP(status);
+                statusHUD.UpdateConditionOverlay(status);
             }
             if (status.health > 0 && status.health < status.maxHealth)
             {

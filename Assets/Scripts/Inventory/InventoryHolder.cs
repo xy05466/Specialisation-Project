@@ -23,8 +23,14 @@ public class InventoryHolder : MonoBehaviour
 
     private void Start()
     {
-        var invSaveData = new InventorySaveData(inventorySystem, transform.position, transform.rotation);
+        Debug.Log(this.gameObject.name);
+        var invSaveData = new InventorySaveData(inventorySystem);
         SaveGameManager.data.playerInventory = invSaveData;
+    }
+
+    private void OnEnable()
+    {
+        OnPlayerInventoryChanged?.Invoke();
     }
 
     protected virtual void Awake()
@@ -38,7 +44,14 @@ public class InventoryHolder : MonoBehaviour
         {
             this.inventorySystem = data.playerInventory.invSystem;
             OnPlayerInventoryChanged?.Invoke();
+            Debug.Log("Inventory loaded");
         }
+    }
+
+    private void OnDisable()
+    {
+        SaveLoad.OnLoadGame -= LoadInventory;
+        Debug.Log("Inventory destroyed");
     }
 }
 
@@ -46,20 +59,9 @@ public class InventoryHolder : MonoBehaviour
 public struct InventorySaveData
 {
     public InventorySystem invSystem;
-    public Vector3 position;
-    public Quaternion rotation;
-
-    public InventorySaveData(InventorySystem _invSystem, Vector3 _position, Quaternion _rotation)
-    {
-        invSystem = _invSystem;
-        position = _position;
-        rotation = _rotation;
-    }
 
     public InventorySaveData(InventorySystem _invSystem)
     {
         invSystem = _invSystem;
-        position = Vector3.zero;
-        rotation = Quaternion.identity;
     }
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4b702213a85421478674d5d4199601c, type: 3}
   m_Name: wolf
   m_EditorClassIdentifier: 
-  charName: wolf
+  charName: Wolf
   position:
   - 0
   - 0
@@ -27,6 +27,7 @@ MonoBehaviour:
   weakness: 1
   heal: 0
   isRecruited: 0
+  isMainPlayer: 0
   party:
   - {fileID: 11400000, guid: 0eaa665cf4758df4a9790ff3911e502d, type: 2}
   condition: 0

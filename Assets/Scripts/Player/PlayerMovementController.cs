@@ -1,14 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovementController : MonoBehaviour, PlayerInput.IPlayerActions
 {
     private Vector3 _direction;
     private Quaternion _rotation;
 
+    private Rigidbody playerRB;
     public CharacterController _characterController;
+    public GameObject boss1Dialogue;
     private bool isMoving;
 
     [SerializeField] private float movementSpeed;
@@ -16,60 +20,53 @@ public class PlayerMovementController : MonoBehaviour, PlayerInput.IPlayerAction
     [SerializeField] private AnimationController animCon;
     private Camera camera;
 
-    private void Start()
-    {
-        camera = Camera.main;
-    }
-
     private void Awake()
     {
         // Create a rotational matrix with 45def offset on Y
         //_isometricInputMatrix = Matrix4x4.Rotate(Quaternion.Euler(0f, 45f, 0f));
         //_characterController = GetComponent<CharacterController>();
+        playerRB = GetComponent<Rigidbody>();
+        //
+    }
+
+    void OnEnable()
+    {        Debug.Log("OnEnable called");
+        SceneManager.sceneLoaded += OnSceneLoaded;
+       // _characterController.Move(transform.position);
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
         camera = Camera.main;
+        _characterController.enabled = false;
+        Debug.Log("charcon" + transform.position);
+    }
+
+    void OnDisable()
+    {
+        //_characterController.enabled = false;
+        Debug.Log("OnDisable");
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Update()
     {
-        _characterController.Move(_direction * movementSpeed * Time.deltaTime);
-        float singleStep = movementSpeed * Time.deltaTime;
-        Vector3 newDirection = Vector3.RotateTowards(transform.forward, _direction, singleStep, 0.0f);
-        transform.parent.rotation = Quaternion.LookRotation(newDirection);
-    }
+        if (!boss1Dialogue.activeSelf)
+        {
+            if ((Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0) && !_characterController.enabled)
+            {
+                _characterController.enabled = true;
+            }
+            if (_characterController.enabled)
+            {
+                _characterController.Move(_direction * movementSpeed * Time.deltaTime);
+            }
 
-    public void UpdateMovement()
-    {
-        _characterController.Move(_direction * movementSpeed * Time.deltaTime);
-        
-        float singleStep = movementSpeed * Time.deltaTime;
-        Vector3 newDirection = Vector3.RotateTowards(transform.forward, _direction, singleStep, 0.0f);
-        transform.rotation = Quaternion.LookRotation(newDirection);
-    }
-
-    //public void GatherInput(InputAction.CallbackContext context)
-    //{
-    //    // Get user input
-    //    _input = context.ReadValue<Vector2>();
-
-    //    // Convert into isometric coordinates
-    //    _direction = _isometricInputMatrix.MultiplyPoint3x4(new Vector3(_input.x, 0.0f, _input.y));
-    //}
-
-    //void Look()
-    //{
-    //    var relative = (transform.position + _direction) - transform.position;
-    //    _rotation = Quaternion.LookRotation(relative, Vector3.up);
-    //}
-
-    //public void Move()
-    //{
-    //    transform.rotation = Quaternion.Lerp(transform.rotation, _rotation, Time.deltaTime * rotationSpeed).normalized;
-    //    _characterController.Move(_direction * movementSpeed * Time.deltaTime);
-    //}
-
-    public void OnNewaction(InputAction.CallbackContext context)
-    {
-        throw new System.NotImplementedException();
+            float singleStep = movementSpeed * Time.deltaTime;
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, _direction, singleStep, 0.0f);
+            transform.parent.rotation = Quaternion.LookRotation(newDirection);
+        }
+       
     }
 
     private Vector3 IsoVectorConvert(Vector3 vector)

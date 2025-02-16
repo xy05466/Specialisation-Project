@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IUsableItems
 {
-    public System.Action UseItem(string name);
+    public System.Action AssignName(string newName);
+    public System.Action UseItem();
     public System.Action EndUse();
 }

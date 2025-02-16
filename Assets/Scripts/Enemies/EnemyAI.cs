@@ -9,7 +9,7 @@ public class EnemyAI : MonoBehaviour
     public enum Behaviour
     {
         BOLD,
-        CAUTIOUS
+        CAUTIOUS,
 
     }
 
@@ -119,7 +119,21 @@ public class EnemyAI : MonoBehaviour
                     }
                     else
                     {
-                        return Action.DEFEND;
+                        foreach (UnitStatus own in party)
+                        {
+                            if (own.health != own.maxHealth)
+                            {
+                                foreach (Skill skill in enemy.skills)
+                                {
+                                    if (skill.currentType == own.heal)
+                                    {
+                                        toHeal = own;
+                                        return Action.DEFEND;
+                                    }
+                                }
+                            }
+                        }
+                        return Action.ATTACK;
                     }
                 }
                 if (enemy.health < target.health)
@@ -130,7 +144,21 @@ public class EnemyAI : MonoBehaviour
                     }
                     else
                     {
-                        return Action.DEFEND;
+                        foreach (UnitStatus own in party)
+                        {
+                            if (own.health != own.maxHealth)
+                            {
+                                foreach (Skill skill in enemy.skills)
+                                {
+                                    if (skill.currentType == own.heal)
+                                    {
+                                        toHeal = own;
+                                        return Action.DEFEND;
+                                    }
+                                }
+                            }
+                        }
+                        return Action.ATTACK;
                     }
                 }
         }

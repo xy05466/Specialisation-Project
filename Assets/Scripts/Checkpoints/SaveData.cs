@@ -9,6 +9,8 @@ public class SaveData
     public SerializableDict<string, InventorySaveData> chestDictionary;
     public SerializableDict<string, ItemPickUpSaveData> activeItems;
     public InventorySaveData playerInventory;
+    //public List<CharacterStatus> playerParty;
+
     public SaveData() 
     {
         collectedItems = new List<string>();
@@ -16,5 +18,6 @@ public class SaveData
         chestDictionary = new SerializableDict<string, InventorySaveData>();
         activeItems = new SerializableDict<string, ItemPickUpSaveData> ();
         playerInventory = new InventorySaveData();
+        //playerParty = new List<CharacterStatus>();
     }
 }

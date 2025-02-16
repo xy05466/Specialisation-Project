@@ -10,12 +10,16 @@ public class StatusHUD : MonoBehaviour
     //public Slider easeHealthSlider;
     //public Slider mpSlider;
     //public Slider easeMpSlider;
+    public TMP_Text charName;
     public Image hpBar;
     public Image easeHpBar;
     public TMP_Text hpValue;
     public Image mpBar;
     public Image easeMpBar;
     public TMP_Text mpValue;
+    public Image deadStatus;
+    public Image hpIncStatus;
+    public Image mpIncStatus;
     private TMP_Text value;
     float currentMana = 0;
     float maxMana = 0;
@@ -39,6 +43,7 @@ public class StatusHUD : MonoBehaviour
         float currentHealth = status.health * (100 / status.maxHealth);
         float currentMana = status.mana * (100 / status.maxMana);
 
+        charName.text = status.charName;
         hpBar.fillAmount = currentHealth / 100;
         easeHpBar.fillAmount = hpBar.fillAmount;
         hpValue.SetText(status.health + "/" + status.maxHealth);
@@ -50,11 +55,12 @@ public class StatusHUD : MonoBehaviour
     public void SetMPHUD(float mMana, float currMana)
     {
 
-            maxMana += mMana;
-            currentMana += currMana;
-            //currentMana *= (100 / maxMana);
-            mpBar.fillAmount = currentMana * (100 / maxMana) / 100;
-            mpValue.SetText(currentMana + "/" + maxMana);
+        maxMana = mMana;
+        currentMana = currMana;
+        //currentMana *= (100 / maxMana);
+        mpBar.fillAmount = currentMana * (100 / maxMana) / 100;
+        easeMpBar.fillAmount = mpBar.fillAmount;
+        mpValue.SetText(currentMana + "/" + maxMana);
 
     }
 
@@ -102,7 +108,31 @@ public class StatusHUD : MonoBehaviour
         yield return null;
     }
 
-    
+    public void SetDeadStatus(bool isActive)
+    {
+        deadStatus.gameObject.SetActive(isActive);
+    }
+
+    public void SetBuffStatus(CharacterStatus.Buff buff)
+    {
+        switch (buff)
+        {
+            case CharacterStatus.Buff.NORMAL:
+                hpIncStatus.gameObject.SetActive(false);
+                mpIncStatus.gameObject.SetActive(false);
+                break;
+            case CharacterStatus.Buff.INCMP:
+                hpIncStatus.gameObject.SetActive(false);
+                mpIncStatus.gameObject.SetActive(true);
+                break;
+            case CharacterStatus.Buff.INCHP:
+                hpIncStatus.gameObject.SetActive(true);
+                mpIncStatus.gameObject.SetActive(false);
+                break;
+        }
+    }
+
+
 
     public IEnumerator SetMP(float mp, bool isIncrease)
     {
@@ -122,7 +152,7 @@ public class StatusHUD : MonoBehaviour
         {
             if (currentMana - mp < 0)
             {
-                currentMana = 0;
+                currentMana = maxMana * 0.1f;
             }
             else
             {

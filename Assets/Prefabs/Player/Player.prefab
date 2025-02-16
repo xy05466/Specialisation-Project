@@ -10215,7 +10215,6 @@ GameObject:
   - component: {fileID: 466942984442138585}
   - component: {fileID: 1727263647474035161}
   - component: {fileID: 2078457290556857249}
-  - component: {fileID: 1194328445851997390}
   m_Layer: 0
   m_Name: NormalPresence
   m_TagString: NormalPresence
@@ -10335,7 +10334,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chestMenu: {fileID: 0}
   healMenu: {fileID: 0}
-  statusMenu: {fileID: 6605543397199553619}
+  normalStatusMenu: {fileID: 0}
+  battleStatusMenu: {fileID: 0}
   saveLoad: {fileID: 6313937359030667274}
 --- !u!114 &9087961572429947606
 MonoBehaviour:
@@ -10418,21 +10418,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   InteractionPointRadius: 1
---- !u!114 &1194328445851997390
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4359267541371427155}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82196b2b194448347aa28486676f45b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventorySize: 5
-  inventorySystem:
-    inventorySlots: []
 --- !u!1 &4395388911551714715
 GameObject:
   m_ObjectHideFlags: 0
@@ -10443,7 +10428,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1950953925775786517}
   - component: {fileID: 562216573752884817}
-  - component: {fileID: 4576772681608285902}
   - component: {fileID: 4642132780620822676}
   m_Layer: 0
   m_Name: Player
@@ -10497,18 +10481,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.8, z: 0}
---- !u!114 &4576772681608285902
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4395388911551714715}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70915b665df8568478de596570068501, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!136 &4642132780620822676
 CapsuleCollider:
   m_ObjectHideFlags: 0

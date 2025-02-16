@@ -54,6 +54,7 @@ MonoBehaviour:
   maxHealth: 75
   mana: 15
   maxMana: 15
+  totalMana: 0
   level: 1
   skills:
   - {fileID: 11400000, guid: d510ca1f4c518a64fb8289c22a225c34, type: 2}
@@ -62,6 +63,7 @@ MonoBehaviour:
   isRecruited: 0
   animCon: {fileID: 8995266071896488363}
   condition: 0
+  party: []
 --- !u!114 &1626586206851910637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7c81e8fa6887104886a0540f14a8c03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  behaviour: 0
 --- !u!95 &4573480597748389405
 Animator:
   serializedVersion: 5
@@ -82,7 +85,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1606651742066350199}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 65eebd1364e9f95448d629350e0d3ed3, type: 2}
   m_CullingMode: 0
@@ -102,7 +105,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1606651742066350199}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81fd166e92626fc409bac11642933e77, type: 3}
   m_Name: 

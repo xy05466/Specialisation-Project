@@ -29,7 +29,8 @@ public class MenuItemData : MonoBehaviour
 
     private void StartUseItem(string name)
     {
-        AssignedInventorySlot.ItemData.UseItem(name);
+        AssignedInventorySlot.ItemData.AssignName(name);
+        AssignedInventorySlot.ItemData.UseItem();
         AssignedInventorySlot.RemoveFromStack(1);
         if (AssignedInventorySlot.StackSize == 0)
         {
@@ -67,7 +68,7 @@ public class MenuItemData : MonoBehaviour
                             if (result.gameObject.GetComponent<GetPlayerName>())
                             {
                                 string name = result.gameObject.GetComponent<GetPlayerName>().GetPlayerNameString();
-
+                                Debug.Log(name);
                                 StartUseItem(name);
 
                             }

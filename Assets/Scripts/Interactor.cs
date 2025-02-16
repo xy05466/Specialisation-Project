@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 public class Interactor : MonoBehaviour
 {
     public Transform InteractionPoint;
     public LayerMask InteractionLayer;
-    public float InteractionPointRadius = 1f;
+    public float InteractionPointRadius = 1.5f;
     public bool IsInteracting { get; private set; }
+
     private GameObject interactingObject;
     private bool isInCollider;
     private HashSet<GameObject> objectsInsideSphere = new HashSet<GameObject>();
@@ -46,23 +48,15 @@ public class Interactor : MonoBehaviour
         {
             if (!currentlyDetectedObjects.Contains(obj))
             {
-                EndInteraction(interactingObject.GetComponent<IInteractable>());
-                interactingObject = null;
+                if (interactingObject != null)
+                {
+                    EndInteraction(interactingObject.GetComponent<IInteractable>());
+                    interactingObject = null;
+                }
+                
             }
         }
         objectsInsideSphere = currentlyDetectedObjects;
-        //for (int i = 0;i < colliders.Length;i++)
-        //{
-        //    if (colliders[i].gameObject != interactingObject)
-        //    {
-
-        //    }
-        //}
-        //if (!isInCollider && interactingObject != null)
-        //{
-        //    EndInteraction(interactingObject.GetComponent<IInteractable>());
-        //    interactingObject = null;
-        //}
     }
 
     void StartInteraction(IInteractable interactable)
